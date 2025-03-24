@@ -1,271 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+  <head>
+    <title>Kjell Hysjulien | Cloud & DevOps Portfolio</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="assets/css/main.css" />
+  </head>
+  <body class="is-preload">
+    <div id="wrapper">
+      <!-- Intro -->
+      <section class="intro">
+        <header>
+          <h1>Kjell Hysjulien</h1>
+          <p>AWS Certified • Cloud Engineering Technology Graduate</p>
+          <ul class="actions">
+            <li>
+              <a href="#about" class="arrow scrolly"
+                ><span class="label">Next</span></a
+              >
+            </li>
+          </ul>
+        </header>
+        <div class="content">
+          <span class="image fill" data-position="center"
+            ><img src="images/pic01.jpg" alt=""
+          /></span>
+        </div>
+      </section>
 
-<head>
-  <title>Networking Notes</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="style.css">
-</head>
+      <!-- About Me -->
+      <section id="about">
+        <header>
+          <h2>About Me</h2>
+        </header>
+        <div class="content">
+          <p>
+            I’m a recent Cloud Engineering Technology graduate with hands-on
+            experience building AWS infrastructure and automating deployments
+            with Terraform and GitHub Actions. Currently seeking an entry-level
+            IT support or help desk role to gain practical experience while
+            further developing my cloud and DevOps skills.
+          </p>
+        </div>
+      </section>
 
-<body>
+      <!-- Projects -->
+      <section>
+        <header>
+          <h2>Projects</h2>
+        </header>
+        <div class="content">
+          <ul class="feature-icons">
+            <li class="icon solid fa-cloud">AWS Website Deployment</li>
+            <li class="icon solid fa-lock">OIDC GitHub Actions Deployment</li>
+            <li class="icon solid fa-terminal">
+              Infrastructure-as-Code with Terraform
+            </li>
+            <li class="icon solid fa-network-wired">
+              Pi-hole on Raspberry Pi with Docker
+            </li>
+          </ul>
+          <p>
+            Set up a network-wide ad blocker on a Raspberry Pi using Docker
+            Compose and custom DNS rules. Developed and deployed this website
+            using S3, CloudFront, Route 53, and Terraform, with GitHub Actions
+            using OpenID Connect for authentication.
+          </p>
+        </div>
+      </section>
 
-  <!-- Navbar -->
-  <div class="w3-top">
-    <div class="w3-bar w3-theme w3-top w3-left-align w3-large">
-      <a class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white w3-large w3-theme-l1"
-        href="javascript:void(0)" onclick="w3_open()"><i class="fa fa-bars"></i></a>
-      <span class="w3-bar-item w3-theme-l1">Networking Notes</span>
-    </div>
-  </div>
+      <!-- Contact & Links -->
+      <section>
+        <header>
+          <h2>Get in Touch</h2>
+        </header>
+        <div class="content">
+          <ul class="actions">
+            <li>
+              <a href="resume.pdf" class="button primary" target="_blank"
+                >View Resume</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://github.com/Kjellios"
+                class="button"
+                target="_blank"
+                >GitHub</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://www.linkedin.com/in/kjell-hysjulien"
+                class="button"
+                target="_blank"
+                >LinkedIn</a
+              >
+            </li>
+          </ul>
+        </div>
+        <footer>
+          <ul class="items">
+            <li>
+              <h3>Email</h3>
+              <a href="mailto:kjell.hysjulien@gmail.com"
+                >kjell.hysjulien@gmail.com</a
+              >
+            </li>
+            <li>
+              <h3>Location</h3>
+              <span>Plymouth, MN</span>
+            </li>
+          </ul>
+        </footer>
+      </section>
 
-  <!-- Sidebar -->
-  <nav class="w3-sidebar w3-bar-block w3-collapse w3-large w3-theme-l5 w3-animate-left" id="mySidebar">
-    <a href="javascript:void(0)" onclick="w3_close()"
-      class="w3-right w3-xlarge w3-padding-large w3-hover-black w3-hide-large" title="Close Menu">
-      <i class="fa fa-remove"></i>
-    </a>
-
-    <h4 class="w3-bar-item"><b>Menu</b></h4>
-
-    <!-- Homescreen Button -->
-    <a href="index.html" class="home-button w3-bar-item">Home</a>
-
-    <!-- Network Basics Dropdown -->
-    <div class="w3-dropdown-click">
-      <button onclick="myFunction()" class="w3-button w3-block w3-left-align">
-        Network Basics <i class="fa fa-caret-down"></i>
-      </button>
-      <div id="Network Basics" class="w3-dropdown-content w3-bar-block w3-card-4">
-        <a href="01_Network_Basics/00_Network_Fundamentals.html" class="w3-bar-item w3-button">Network Fundamentals</a>
-        <a href="01_Network_Basics/01_Binary_Conversion.html" class="w3-bar-item w3-button">Binary Conversion</a>
-        <a href="01_Network_Basics/02_Layer1_Physical.html" class="w3-bar-item w3-button">Layer 1 - Physical</a>
-        <a href="01_Network_Basics/03_Layer2_DataLink.html" class="w3-bar-item w3-button">Layer 2 - Data Link Layer</a>
-        <a href="01_Network_Basics/04_Layer3_Network.html" class="w3-bar-item w3-button">Layer 3 - Network</a>
-        <a href="01_Network_Basics/05_Layer4_Transport.html" class="w3-bar-item w3-button">Layer 4 - Transport</a>
-        <a href="01_Network_Basics/06_Layer5_Session.html" class="w3-bar-item w3-button">Layer 5 - Session</a>
-        <a href="01_Network_Basics/07_Layer6_Presentation.html" class="w3-bar-item w3-button">Layer 6 - Presentation</a>
-        <a href="01_Network_Basics/08_Layer7_Application.html" class="w3-bar-item w3-button">Layer 7 - Application</a>
+      <!-- Copyright -->
+      <div class="copyright">
+        &copy; Kjell Hysjulien. Design:
+        <a href="https://html5up.net">HTML5 UP</a>.
       </div>
     </div>
 
-    <!-- Network Security Dropdown -->
-    <div class="w3-dropdown-click">
-      <button onclick="myFunction2()" class="w3-button w3-block w3-left-align">
-        Network Security <i class="fa fa-caret-down"></i>
-      </button>
-      <div id="Network Security" class="w3-dropdown-content w3-bar-block w3-card-4">
-        <a href="02_Network_Security/01_Network_Address_Translation.html" class="w3-bar-item w3-button">Network Address
-          Translation</a>
-        <a href="02_Network_Security/02_Stateful_vs_Stateless_Firewalls.html" class="w3-bar-item w3-button">Firewalls:
-          Stateful vs Stateless</a>
-        <a href="02_Network_Security/03_SSL_TLS.html" class="w3-bar-item w3-button">SSL and TLS</a>
-        <a href="02_Network_Security/04_Border_Gateway_Protocol_BGP.html" class="w3-bar-item w3-button">BGP Protocol</a>
-        <a href="02_Network_Security/05_IPSec_VPN.html" class="w3-bar-item w3-button">IP Sec VPN</a>
-      </div>
-    </div>
-
-    <!-- Network Infrastructure Dropdown -->
-    <div class="w3-dropdown-click">
-      <button onclick="myFunction3()" class="w3-button w3-block w3-left-align">
-        Network Infrastructure <i class="fa fa-caret-down"></i>
-      </button>
-      <div id="Network Infrastructure" class="w3-dropdown-content w3-bar-block w3-card-4">
-        <a href="03_Network_Infrastructure/01_IP_Address_Space_Subnetting.html" class="w3-bar-item w3-button">IP
-          Addressing and Subnetting</a>
-        <a href="03_Network_Infrastructure/02_DDOS_Attacks.html" class="w3-bar-item w3-button">DDOS Attacks</a>
-        <a href="03_Network_Infrastructure/03_VLANs_Trunks_QinQ.html" class="w3-bar-item w3-button">VLANs and TRUNKS</a>
-        <a href="03_Network_Infrastructure/04_JumboFrames.html" class="w3-bar-item w3-button">Jumbo Frames</a>
-        <a href="03_Network_Infrastructure/05_Fibre_Optic_Cable.html" class="w3-bar-item w3-button">Fibre Optic
-          Cable</a>
-      </div>
-    </div>
-
-    <!-- Encryption & Security Dropdown -->
-    <div class="w3-dropdown-click">
-      <button onclick="myFunction4()" class="w3-button w3-block w3-left-align">
-        Encryption & Security <i class="fa fa-caret-down"></i>
-      </button>
-      <div id="Encryption & Security" class="w3-dropdown-content w3-bar-block w3-card-4">
-        <a href="04_Encryption_&_Security/01_Encryption.html" class="w3-bar-item w3-button">Encryption Overview</a>
-        <a href="04_Encryption_&_Security/02_Envelope_Encryption.html" class="w3-bar-item w3-button">Envelope
-          Encryption</a>
-        <a href="04_Encryption_&_Security/03_Hardware_Security_Modules_HSMs.html" class="w3-bar-item w3-button">HSMs</a>
-        <a href="04_Encryption_&_Security/04_Hash_Functions_Hashing.html" class="w3-bar-item w3-button">Hash
-          Functions</a>
-        <a href="04_Encryption_&_Security/05_Digital_Signatures.html" class="w3-bar-item w3-button">Digital
-          Signatures</a>
-      </div>
-    </div>
-
-    <!-- DNS & DNSSEC Dropdown -->
-    <div class="w3-dropdown-click">
-      <button onclick="myFunction5()" class="w3-button w3-block w3-left-align">
-        DNS & DNSSEC <i class="fa fa-caret-down"></i>
-      </button>
-      <div id="DNS & DNSSEC" class="w3-dropdown-content w3-bar-block w3-card-4">
-        <a href="05_DNS_&_DNSSEC/01_About_DNS.html" class="w3-bar-item w3-button">DNS Overview</a>
-        <a href="05_DNS_&_DNSSEC/02_DNS_Complexity.html" class="w3-bar-item w3-button">Understanding DNS Complexity</a>
-        <a href="05_DNS_&_DNSSEC/03_How_DNS_Works.html" class="w3-bar-item w3-button">DNS Mechanics</a>
-        <a href="05_DNS_&_DNSSEC/04_DNS_Domains.html" class="w3-bar-item w3-button">DNS Domains</a>
-        <a href="05_DNS_&_DNSSEC/05_DNSSEC_Necessity.html" class="w3-bar-item w3-button">Why DNSSEC?</a>
-        <a href="05_DNS_&_DNSSEC/06_DNSSEC_Mechanics.html" class="w3-bar-item w3-button">DNSSEC Mechanics</a>
-        <a href="05_DNS_&_DNSSEC/07_DNSSEC_Chain_of_Trust.html" class="w3-bar-item w3-button">Chain of Trust in
-          DNSSEC</a>
-        <a href="05_DNS_&_DNSSEC/08_DNSSEC_Root_Signing.html" class="w3-bar-item w3-button">DNSSEC Root Signing</a>
-      </div>
-    </div>
-
-    <!-- Cloud Computing Dropdown -->
-    <div class="w3-dropdown-click">
-      <button onclick="myFunction6()" class="w3-button w3-block w3-left-align">
-        Cloud Computing <i class="fa fa-caret-down"></i>
-      </button>
-      <div id="Cloud Computing" class="w3-dropdown-content w3-bar-block w3-card-4">
-        <a href="06_Cloud_Computing/01_Cloud_Computing_Overview.html" class="w3-bar-item w3-button">Cloud Computing
-          Basics</a>
-        <a href="06_Cloud_Computing/02_Cloud_Models_Comparison.html" class="w3-bar-item w3-button">Cloud Models
-          Comparison</a>
-        <a href="06_Cloud_Computing/03_IAAS_PAAS_SAAS.html" class="w3-bar-item w3-button">IAAS vs PAAS vs SAAS</a>
-      </div>
-    </div>
-
-    <!-- Misc Technologies Dropdown -->
-    <div class="w3-dropdown-click">
-      <button onclick="myFunction7()" class="w3-button w3-block w3-left-align">
-        Misc Technologies <i class="fa fa-caret-down"></i>
-      </button>
-      <div id="Misc Technologies" class="w3-dropdown-content w3-bar-block w3-card-4">
-        <a href="07_Misc_Technologies/01_Kubernetes.html" class="w3-bar-item w3-button">Kubernetes</a>
-        <a href="07_Misc_Technologies/02_RPO_RTO.html" class="w3-bar-item w3-button">RPO & RTO</a>
-        <a href="07_Misc_Technologies/03_YAML.html" class="w3-bar-item w3-button">YAML</a>
-        <a href="07_Misc_Technologies/04_JSON.html" class="w3-bar-item w3-button">JSON</a>
-      </div>
-    </div>
-
-  </nav>
-
-  <!-- Overlay effect when opening sidebar on small screens -->
-  <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu"
-    id="myOverlay"></div>
-
-  <!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
-  <div class="w3-main" style="margin-left:250px">
-
-    <div class="w3-row w3-padding-64">
-      <div class="w3- w3-whole w3-container">
-
-        <!-- START NOTES HERE-->
-
-        <h1>AWS Environment Configuration</h1>
-        <ol>
-            <li>
-                <strong>VPC Configuration</strong>
-                <ul>
-                    <li><strong>Region</strong>: us-east-1</li>
-                    <li><strong>IPv4 CIDR</strong>: 172.31.0.0/16</li>
-                    <li><strong>DNS Hostnames and Resolution</strong>: Enabled</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Route Tables</strong>
-                <ul>
-                    <li>Route tables are configured to manage network traffic within the VPC efficiently.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Internet Gateway</strong>
-                <ul>
-                    <li>An internet gateway is attached to the VPC to allow internet access.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Network ACLs</strong>
-                <ul>
-                    <li>Network ACLs are set up to provide an additional layer of security by controlling inbound and outbound traffic at the subnet level.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>DNS Firewall Domain Lists</strong>
-                <ul>
-                    <li>AWS managed domain lists are used to enhance security against known threats.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>S3 Configuration</strong>
-                <ul>
-                    <li><strong>Primary Website Bucket</strong>
-                        <ul>
-                            <li><strong>Versioning</strong>: Enabled</li>
-                            <li><strong>Default Encryption</strong>: Enabled</li>
-                            <li><strong>Static Website Hosting</strong>: Enabled</li>
-                        </ul>
-                    </li>
-                    <li><strong>Redirection Bucket</strong>
-                        <ul>
-                            <li><strong>Static Website Hosting</strong>: Redirect to CloudFront distribution</li>
-                        </ul>
-                    </li>
-                    <li><strong>Logging Bucket</strong>
-                        <ul>
-                            <li>Dedicated for storing logs, with strict access controls.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Permissions</strong>
-                        <ul>
-                            <li>Bucket policies and ACLs are configured to ensure appropriate access controls and security.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <strong>AWS Certificate Manager</strong>
-                <ul>
-                    <li><strong>Certificate Details</strong>
-                        <ul>
-                            <li>Certificates are used to secure communications for the website, supporting multiple domain names.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <strong>CloudFront Configuration</strong>
-                <ul>
-                    <li>CloudFront distribution is set up for content delivery with SSL/TLS certificates and WAF protection enabled.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Route 53 Configuration</strong>
-                <ul>
-                    <li><strong>DNS Records</strong>
-                        <ul>
-                            <li>DNS records are configured to route traffic efficiently to CloudFront distributions.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <strong>IAM Configuration</strong>
-                <ul>
-                    <li><strong>IAM Users and Groups</strong>
-                        <ul>
-                            <li>IAM policies and roles are configured to follow the principle of least privilege, ensuring secure access management.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ol>
-
-        <!-- END NOTES HERE -->
-
-        <!-- Footer -->
-
-        <script src="script.js"></script>
-
-</body>
-
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
 </html>
