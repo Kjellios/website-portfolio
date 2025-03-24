@@ -1,3 +1,35 @@
+# === Terraform ===
+*.tfstate
+*.tfstate.backup
 .terraform/
 .terraform.lock.hcl
+crash.log
+override.tf
+override.tf.json
+terraform.tfvars
+
+# === macOS ===
+.DS_Store
+
+# === Node.js (if ever used for frontend logic) ===
+node_modules/
+dist/
+build/
+
+# === VS Code ===
+.vscode/
+
+# === Python (if scripts are added later) ===
+__pycache__/
+*.py[cod]
+
+# === Logs ===
+*.log
+
+# === AWS credentials or other secrets (should never be committed) ===
+.aws/
+*.pem
+*.key
+*.crt
+.env
 
