@@ -1,0 +1,21 @@
+# Block specific crawlers that don't add value
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: ByteSpider
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+# General rules for all other bots
+User-agent: *
+Disallow: /tmp/
+Disallow: /private/
+
+# Point to sitemap for search engines
+Sitemap: https://kjellhysjulien.com/sitemap.xml
+
