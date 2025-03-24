@@ -1,0 +1,1630 @@
+# aws_cloudfront_distribution.website_cdn:
+resource "aws_cloudfront_distribution" "website_cdn" {
+    aliases                        = [
+        "kjellhysjulien.com",
+        "www.kjellhysjulien.com",
+    ]
+    arn                            = "arn:aws:cloudfront::843785657965:distribution/E1M6WG52DZEBP1"
+    caller_reference               = "cfe48761-5c58-4e62-b943-5d0d35c7bc9c"
+    default_root_object            = "index.html"
+    domain_name                    = "dka09xss205q1.cloudfront.net"
+    enabled                        = true
+    etag                           = "E20OJB9LUGSC4I"
+    hosted_zone_id                 = "Z2FDTNDATAQYW2"
+    http_version                   = "http2"
+    id                             = "E1M6WG52DZEBP1"
+    in_progress_validation_batches = 0
+    is_ipv6_enabled                = true
+    last_modified_time             = "2024-06-20 23:23:51.794 +0000 UTC"
+    price_class                    = "PriceClass_100"
+    retain_on_delete               = false
+    staging                        = false
+    status                         = "Deployed"
+    tags                           = {
+        "Name" = "Website"
+    }
+    tags_all                       = {
+        "Name" = "Website"
+    }
+    trusted_key_groups             = [
+        {
+            enabled = false
+            items   = []
+        },
+    ]
+    trusted_signers                = [
+        {
+            enabled = false
+            items   = []
+        },
+    ]
+    wait_for_deployment            = true
+    web_acl_id                     = "arn:aws:wafv2:us-east-1:843785657965:global/webacl/CreatedByCloudFront-d140ac24-6856-4d2c-a001-38a2f5e1300a/a832554d-e00a-428e-9f99-213e01f460cb"
+
+    default_cache_behavior {
+        allowed_methods            = [
+            "GET",
+            "HEAD",
+        ]
+        cache_policy_id            = "658327ea-f89d-4fab-a63d-7e88639e58f6"
+        cached_methods             = [
+            "GET",
+            "HEAD",
+        ]
+        compress                   = true
+        default_ttl                = 0
+        max_ttl                    = 0
+        min_ttl                    = 0
+        response_headers_policy_id = "a0d80d0d-1133-465b-b22c-4149931c0554"
+        smooth_streaming           = false
+        target_origin_id           = "kjellhysjulien.com.s3-website-us-east-1.amazonaws.com"
+        trusted_key_groups         = []
+        trusted_signers            = []
+        viewer_protocol_policy     = "redirect-to-https"
+
+        grpc_config {
+            enabled = false
+        }
+    }
+
+    origin {
+        connection_attempts = 3
+        connection_timeout  = 10
+        domain_name         = "kjellhysjulien.com.s3-website-us-east-1.amazonaws.com"
+        origin_id           = "kjellhysjulien.com.s3-website-us-east-1.amazonaws.com"
+
+        custom_origin_config {
+            http_port                = 80
+            https_port               = 443
+            origin_keepalive_timeout = 5
+            origin_protocol_policy   = "http-only"
+            origin_read_timeout      = 30
+            origin_ssl_protocols     = [
+                "TLSv1.2",
+            ]
+        }
+    }
+
+    restrictions {
+        geo_restriction {
+            locations        = []
+            restriction_type = "none"
+        }
+    }
+
+    viewer_certificate {
+        acm_certificate_arn            = "arn:aws:acm:us-east-1:843785657965:certificate/00c8e041-bf4b-408c-b30a-12149e298e22"
+        cloudfront_default_certificate = false
+        minimum_protocol_version       = "TLSv1.2_2021"
+        ssl_support_method             = "sni-only"
+    }
+}
+
+# aws_s3_bucket.log_bucket:
+resource "aws_s3_bucket" "log_bucket" {
+    arn                         = "arn:aws:s3:::logs.kjellhysjulien.com"
+    bucket                      = "logs.kjellhysjulien.com"
+    bucket_domain_name          = "logs.kjellhysjulien.com.s3.amazonaws.com"
+    bucket_regional_domain_name = "logs.kjellhysjulien.com.s3.us-east-1.amazonaws.com"
+    force_destroy               = true
+    hosted_zone_id              = "Z3AQBSTGFYJSTF"
+    id                          = "logs.kjellhysjulien.com"
+    object_lock_enabled         = false
+    policy                      = jsonencode(
+        {
+            Id        = "S3-Console-Auto-Gen-Policy-1704933573475"
+            Statement = [
+                {
+                    Action    = "s3:PutObject"
+                    Effect    = "Allow"
+                    Principal = {
+                        Service = "logging.s3.amazonaws.com"
+                    }
+                    Resource  = "arn:aws:s3:::logs.kjellhysjulien.com/*"
+                    Sid       = "S3PolicyStmt-DO-NOT-MODIFY-1704933573350"
+                },
+            ]
+            Version   = "2012-10-17"
+        }
+    )
+    region                      = "us-east-1"
+    request_payer               = "BucketOwner"
+    tags                        = {}
+    tags_all                    = {}
+
+    grant {
+        id          = "c4c1ede66af53448b93c283ce9448c4ba468c9432aa01d700d3878632f77d2d0"
+        permissions = [
+            "FULL_CONTROL",
+        ]
+        type        = "CanonicalUser"
+    }
+    grant {
+        id          = "eedb87a644f63db562aa551a7434b8eeaa6765c6913d77007218b03c750b7364"
+        permissions = [
+            "FULL_CONTROL",
+        ]
+        type        = "CanonicalUser"
+    }
+
+    lifecycle_rule {
+        abort_incomplete_multipart_upload_days = 0
+        enabled                                = true
+        id                                     = "TransitionAndDeleteLogs"
+        tags                                   = {}
+
+        expiration {
+            days                         = 60
+            expired_object_delete_marker = false
+        }
+
+        transition {
+            days          = 30
+            storage_class = "ONEZONE_IA"
+        }
+    }
+
+    server_side_encryption_configuration {
+        rule {
+            bucket_key_enabled = true
+
+            apply_server_side_encryption_by_default {
+                sse_algorithm = "AES256"
+            }
+        }
+    }
+
+    versioning {
+        enabled    = true
+        mfa_delete = false
+    }
+}
+
+# aws_s3_bucket.root_site:
+resource "aws_s3_bucket" "root_site" {
+    arn                         = "arn:aws:s3:::kjellhysjulien.com"
+    bucket                      = "kjellhysjulien.com"
+    bucket_domain_name          = "kjellhysjulien.com.s3.amazonaws.com"
+    bucket_regional_domain_name = "kjellhysjulien.com.s3.us-east-1.amazonaws.com"
+    force_destroy               = true
+    hosted_zone_id              = "Z3AQBSTGFYJSTF"
+    id                          = "kjellhysjulien.com"
+    object_lock_enabled         = false
+    policy                      = jsonencode(
+        {
+            Statement = [
+                {
+                    Action    = "s3:GetObject"
+                    Effect    = "Allow"
+                    Principal = "*"
+                    Resource  = "arn:aws:s3:::kjellhysjulien.com/*"
+                    Sid       = "AddPerm"
+                },
+            ]
+            Version   = "2012-10-17"
+        }
+    )
+    region                      = "us-east-1"
+    request_payer               = "BucketOwner"
+    tags                        = {}
+    tags_all                    = {}
+    website_domain              = "s3-website-us-east-1.amazonaws.com"
+    website_endpoint            = "kjellhysjulien.com.s3-website-us-east-1.amazonaws.com"
+
+    grant {
+        id          = "eedb87a644f63db562aa551a7434b8eeaa6765c6913d77007218b03c750b7364"
+        permissions = [
+            "FULL_CONTROL",
+        ]
+        type        = "CanonicalUser"
+    }
+
+    logging {
+        target_bucket = "logs.kjellhysjulien.com"
+        target_prefix = "CloudWatch logs/"
+    }
+
+    server_side_encryption_configuration {
+        rule {
+            bucket_key_enabled = true
+
+            apply_server_side_encryption_by_default {
+                sse_algorithm = "AES256"
+            }
+        }
+    }
+
+    versioning {
+        enabled    = true
+        mfa_delete = false
+    }
+
+    website {
+        error_document = "error.html"
+        index_document = "index.html"
+        routing_rules  = jsonencode(
+            [
+                {
+                    Condition = {
+                        KeyPrefixEquals = "01%20Network%20Basics/00_Network_Fundamentals.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "01_Network_Basics/00_Network_Fundamentals.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "01%20Network%20Basics/01_Binary_Conversion.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "01_Network_Basics/01_Binary_Conversion.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "01%20Network%20Basics/02_Layer1_Physical.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "01_Network_Basics/02_Layer1_Physical.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "01%20Network%20Basics/03_Layer2_DataLink.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "01_Network_Basics/03_Layer2_DataLink.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "01%20Network%20Basics/04_Layer3_Network.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "01_Network_Basics/04_Layer3_Network.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "01%20Network%20Basics/05_Layer4_Transport.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "01_Network_Basics/05_Layer4_Transport.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "01%20Network%20Basics/06_Layer5_Session.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "01_Network_Basics/06_Layer5_Session.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "01%20Network%20Basics/07_Layer6_Presentation.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "01_Network_Basics/07_Layer6_Presentation.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "01%20Network%20Basics/08_Layer7_Application.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "01_Network_Basics/08_Layer7_Application.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "02%20Network%20Security/01_Network_Address_Translation.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "02_Network_Security/01_Network_Address_Translation.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "02%20Network%20Security/02_Stateful_vs_Stateless_Firewalls.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "02_Network_Security/02_Stateful_vs_Stateless_Firewalls.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "02%20Network%20Security/03_SSL_TLS.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "02_Network_Security/03_SSL_TLS.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "02%20Network%20Security/04_Border_Gateway_Protocol_BGP.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "02_Network_Security/04_Border_Gateway_Protocol_BGP.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "02%20Network%20Security/05_IPSec_VPN.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "02_Network_Security/05_IPSec_VPN.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "03%20Network%20Infrastructure/01_IP_Address_Space_Subnetting.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "03_Network_Infrastructure/01_IP_Address_Space_Subnetting.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "03%20Network%20Infrastructure/02_DDOS_Attacks.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "03_Network_Infrastructure/02_DDOS_Attacks.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "03%20Network%20Infrastructure/03_VLANs_Trunks_QinQ.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "03_Network_Infrastructure/03_VLANs_Trunks_QinQ.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "03%20Network%20Infrastructure/04_JumboFrames.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "03_Network_Infrastructure/04_JumboFrames.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "03%20Network%20Infrastructure/05_Fibre_Optic_Cable.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "03_Network_Infrastructure/05_Fibre_Optic_Cable.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "04%20Encryption%20&%20Security/01_Encryption.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "04_Encryption_&_Security/01_Encryption.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "04%20Encryption%20&%20Security/02_Envelope_Encryption.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "04_Encryption_&_Security/02_Envelope_Encryption.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "04%20Encryption%20&%20Security/03_Hardware_Security_Modules_HSMs.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "04_Encryption_&_Security/03_Hardware_Security_Modules_HSMs.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "04%20Encryption%20&%20Security/04_Hash_Functions_Hashing.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "04_Encryption_&_Security/04_Hash_Functions_Hashing.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "04%20Encryption%20&%20Security/05_Digital_Signatures.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "04_Encryption_&_Security/05_Digital_Signatures.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/01_About_DNS.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "05_DNS_&_DNSSEC/01_About_DNS.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/02_DNS_Complexity.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "05_DNS_&_DNSSEC/02_DNS_Complexity.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/03_How_DNS_Works.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "05_DNS_&_DNSSEC/03_How_DNS_Works.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/04_DNS_Domains.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "05_DNS_&_DNSSEC/04_DNS_Domains.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/05_DNSSEC_Necessity.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "05_DNS_&_DNSSEC/05_DNSSEC_Necessity.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/06_DNSSEC_Mechanics.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "05_DNS_&_DNSSEC/06_DNSSEC_Mechanics.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/07_DNSSEC_Chain_of_Trust.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "05_DNS_&_DNSSEC/07_DNSSEC_Chain_of_Trust.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/08_DNSSEC_Root_Signing.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "05_DNS_&_DNSSEC/08_DNSSEC_Root_Signing.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "06%20Cloud%20Computing/01_Cloud_Computing_Overview.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "06_Cloud_Computing/01_Cloud_Computing_Overview.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "06%20Cloud%20Computing/02_Cloud_Models_Comparison.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "06_Cloud_Computing/02_Cloud_Models_Comparison.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "06%20Cloud%20Computing/03_IAAS_PAAS_SAAS.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "06_Cloud_Computing/03_IAAS_PAAS_SAAS.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "07%20Misc%20Technologies/01_Kubernetes.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "07_Misc_Technologies/01_Kubernetes.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "07%20Misc%20Technologies/02_RPO_RTO.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "07_Misc_Technologies/02_RPO_RTO.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "07%20Misc%20Technologies/03_YAML.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "07_Misc_Technologies/03_YAML.html"
+                    }
+                },
+                {
+                    Condition = {
+                        KeyPrefixEquals = "07%20Misc%20Technologies/04_JSON.html"
+                    }
+                    Redirect  = {
+                        HostName         = "www.kjellhysjulien.com"
+                        HttpRedirectCode = "301"
+                        Protocol         = "https"
+                        ReplaceKeyWith   = "07_Misc_Technologies/04_JSON.html"
+                    }
+                },
+            ]
+        )
+    }
+}
+
+# aws_s3_bucket.www_redirect:
+resource "aws_s3_bucket" "www_redirect" {
+    arn                         = "arn:aws:s3:::www.kjellhysjulien.com"
+    bucket                      = "www.kjellhysjulien.com"
+    bucket_domain_name          = "www.kjellhysjulien.com.s3.amazonaws.com"
+    bucket_regional_domain_name = "www.kjellhysjulien.com.s3.us-east-1.amazonaws.com"
+    force_destroy               = true
+    hosted_zone_id              = "Z3AQBSTGFYJSTF"
+    id                          = "www.kjellhysjulien.com"
+    object_lock_enabled         = false
+    policy                      = jsonencode(
+        {
+            Statement = [
+                {
+                    Action    = "s3:GetObject"
+                    Effect    = "Allow"
+                    Principal = "*"
+                    Resource  = "arn:aws:s3:::www.kjellhysjulien.com/*"
+                    Sid       = "AddPerm"
+                },
+            ]
+            Version   = "2012-10-17"
+        }
+    )
+    region                      = "us-east-1"
+    request_payer               = "BucketOwner"
+    tags                        = {}
+    tags_all                    = {}
+    website_domain              = "s3-website-us-east-1.amazonaws.com"
+    website_endpoint            = "www.kjellhysjulien.com.s3-website-us-east-1.amazonaws.com"
+
+    grant {
+        id          = "eedb87a644f63db562aa551a7434b8eeaa6765c6913d77007218b03c750b7364"
+        permissions = [
+            "FULL_CONTROL",
+        ]
+        type        = "CanonicalUser"
+    }
+
+    server_side_encryption_configuration {
+        rule {
+            bucket_key_enabled = true
+
+            apply_server_side_encryption_by_default {
+                sse_algorithm = "AES256"
+            }
+        }
+    }
+
+    versioning {
+        enabled    = true
+        mfa_delete = false
+    }
+
+    website {
+        redirect_all_requests_to = "https://d1234567890.cloudfront.net"
+    }
+}
+
+# aws_s3_bucket_website_configuration.root_site:
+resource "aws_s3_bucket_website_configuration" "root_site" {
+    bucket           = "kjellhysjulien.com"
+    id               = "kjellhysjulien.com"
+    routing_rules    = jsonencode(
+        [
+            {
+                Condition = {
+                    KeyPrefixEquals = "01%20Network%20Basics/00_Network_Fundamentals.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "01_Network_Basics/00_Network_Fundamentals.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "01%20Network%20Basics/01_Binary_Conversion.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "01_Network_Basics/01_Binary_Conversion.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "01%20Network%20Basics/02_Layer1_Physical.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "01_Network_Basics/02_Layer1_Physical.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "01%20Network%20Basics/03_Layer2_DataLink.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "01_Network_Basics/03_Layer2_DataLink.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "01%20Network%20Basics/04_Layer3_Network.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "01_Network_Basics/04_Layer3_Network.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "01%20Network%20Basics/05_Layer4_Transport.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "01_Network_Basics/05_Layer4_Transport.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "01%20Network%20Basics/06_Layer5_Session.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "01_Network_Basics/06_Layer5_Session.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "01%20Network%20Basics/07_Layer6_Presentation.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "01_Network_Basics/07_Layer6_Presentation.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "01%20Network%20Basics/08_Layer7_Application.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "01_Network_Basics/08_Layer7_Application.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "02%20Network%20Security/01_Network_Address_Translation.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "02_Network_Security/01_Network_Address_Translation.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "02%20Network%20Security/02_Stateful_vs_Stateless_Firewalls.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "02_Network_Security/02_Stateful_vs_Stateless_Firewalls.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "02%20Network%20Security/03_SSL_TLS.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "02_Network_Security/03_SSL_TLS.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "02%20Network%20Security/04_Border_Gateway_Protocol_BGP.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "02_Network_Security/04_Border_Gateway_Protocol_BGP.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "02%20Network%20Security/05_IPSec_VPN.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "02_Network_Security/05_IPSec_VPN.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "03%20Network%20Infrastructure/01_IP_Address_Space_Subnetting.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "03_Network_Infrastructure/01_IP_Address_Space_Subnetting.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "03%20Network%20Infrastructure/02_DDOS_Attacks.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "03_Network_Infrastructure/02_DDOS_Attacks.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "03%20Network%20Infrastructure/03_VLANs_Trunks_QinQ.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "03_Network_Infrastructure/03_VLANs_Trunks_QinQ.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "03%20Network%20Infrastructure/04_JumboFrames.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "03_Network_Infrastructure/04_JumboFrames.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "03%20Network%20Infrastructure/05_Fibre_Optic_Cable.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "03_Network_Infrastructure/05_Fibre_Optic_Cable.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "04%20Encryption%20&%20Security/01_Encryption.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "04_Encryption_&_Security/01_Encryption.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "04%20Encryption%20&%20Security/02_Envelope_Encryption.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "04_Encryption_&_Security/02_Envelope_Encryption.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "04%20Encryption%20&%20Security/03_Hardware_Security_Modules_HSMs.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "04_Encryption_&_Security/03_Hardware_Security_Modules_HSMs.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "04%20Encryption%20&%20Security/04_Hash_Functions_Hashing.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "04_Encryption_&_Security/04_Hash_Functions_Hashing.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "04%20Encryption%20&%20Security/05_Digital_Signatures.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "04_Encryption_&_Security/05_Digital_Signatures.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/01_About_DNS.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "05_DNS_&_DNSSEC/01_About_DNS.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/02_DNS_Complexity.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "05_DNS_&_DNSSEC/02_DNS_Complexity.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/03_How_DNS_Works.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "05_DNS_&_DNSSEC/03_How_DNS_Works.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/04_DNS_Domains.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "05_DNS_&_DNSSEC/04_DNS_Domains.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/05_DNSSEC_Necessity.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "05_DNS_&_DNSSEC/05_DNSSEC_Necessity.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/06_DNSSEC_Mechanics.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "05_DNS_&_DNSSEC/06_DNSSEC_Mechanics.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/07_DNSSEC_Chain_of_Trust.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "05_DNS_&_DNSSEC/07_DNSSEC_Chain_of_Trust.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "05%20DNS%20&%20DNSSEC/08_DNSSEC_Root_Signing.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "05_DNS_&_DNSSEC/08_DNSSEC_Root_Signing.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "06%20Cloud%20Computing/01_Cloud_Computing_Overview.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "06_Cloud_Computing/01_Cloud_Computing_Overview.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "06%20Cloud%20Computing/02_Cloud_Models_Comparison.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "06_Cloud_Computing/02_Cloud_Models_Comparison.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "06%20Cloud%20Computing/03_IAAS_PAAS_SAAS.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "06_Cloud_Computing/03_IAAS_PAAS_SAAS.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "07%20Misc%20Technologies/01_Kubernetes.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "07_Misc_Technologies/01_Kubernetes.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "07%20Misc%20Technologies/02_RPO_RTO.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "07_Misc_Technologies/02_RPO_RTO.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "07%20Misc%20Technologies/03_YAML.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "07_Misc_Technologies/03_YAML.html"
+                }
+            },
+            {
+                Condition = {
+                    KeyPrefixEquals = "07%20Misc%20Technologies/04_JSON.html"
+                }
+                Redirect  = {
+                    HostName         = "www.kjellhysjulien.com"
+                    HttpRedirectCode = "301"
+                    Protocol         = "https"
+                    ReplaceKeyWith   = "07_Misc_Technologies/04_JSON.html"
+                }
+            },
+        ]
+    )
+    website_domain   = "s3-website-us-east-1.amazonaws.com"
+    website_endpoint = "kjellhysjulien.com.s3-website-us-east-1.amazonaws.com"
+
+    error_document {
+        key = "error.html"
+    }
+
+    index_document {
+        suffix = "index.html"
+    }
+
+    routing_rule {
+        condition {
+            key_prefix_equals = "01%20Network%20Basics/00_Network_Fundamentals.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "01_Network_Basics/00_Network_Fundamentals.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "01%20Network%20Basics/01_Binary_Conversion.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "01_Network_Basics/01_Binary_Conversion.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "01%20Network%20Basics/02_Layer1_Physical.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "01_Network_Basics/02_Layer1_Physical.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "01%20Network%20Basics/03_Layer2_DataLink.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "01_Network_Basics/03_Layer2_DataLink.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "01%20Network%20Basics/04_Layer3_Network.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "01_Network_Basics/04_Layer3_Network.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "01%20Network%20Basics/05_Layer4_Transport.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "01_Network_Basics/05_Layer4_Transport.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "01%20Network%20Basics/06_Layer5_Session.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "01_Network_Basics/06_Layer5_Session.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "01%20Network%20Basics/07_Layer6_Presentation.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "01_Network_Basics/07_Layer6_Presentation.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "01%20Network%20Basics/08_Layer7_Application.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "01_Network_Basics/08_Layer7_Application.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "02%20Network%20Security/01_Network_Address_Translation.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "02_Network_Security/01_Network_Address_Translation.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "02%20Network%20Security/02_Stateful_vs_Stateless_Firewalls.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "02_Network_Security/02_Stateful_vs_Stateless_Firewalls.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "02%20Network%20Security/03_SSL_TLS.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "02_Network_Security/03_SSL_TLS.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "02%20Network%20Security/04_Border_Gateway_Protocol_BGP.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "02_Network_Security/04_Border_Gateway_Protocol_BGP.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "02%20Network%20Security/05_IPSec_VPN.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "02_Network_Security/05_IPSec_VPN.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "03%20Network%20Infrastructure/01_IP_Address_Space_Subnetting.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "03_Network_Infrastructure/01_IP_Address_Space_Subnetting.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "03%20Network%20Infrastructure/02_DDOS_Attacks.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "03_Network_Infrastructure/02_DDOS_Attacks.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "03%20Network%20Infrastructure/03_VLANs_Trunks_QinQ.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "03_Network_Infrastructure/03_VLANs_Trunks_QinQ.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "03%20Network%20Infrastructure/04_JumboFrames.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "03_Network_Infrastructure/04_JumboFrames.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "03%20Network%20Infrastructure/05_Fibre_Optic_Cable.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "03_Network_Infrastructure/05_Fibre_Optic_Cable.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "04%20Encryption%20&%20Security/01_Encryption.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "04_Encryption_&_Security/01_Encryption.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "04%20Encryption%20&%20Security/02_Envelope_Encryption.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "04_Encryption_&_Security/02_Envelope_Encryption.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "04%20Encryption%20&%20Security/03_Hardware_Security_Modules_HSMs.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "04_Encryption_&_Security/03_Hardware_Security_Modules_HSMs.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "04%20Encryption%20&%20Security/04_Hash_Functions_Hashing.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "04_Encryption_&_Security/04_Hash_Functions_Hashing.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "04%20Encryption%20&%20Security/05_Digital_Signatures.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "04_Encryption_&_Security/05_Digital_Signatures.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "05%20DNS%20&%20DNSSEC/01_About_DNS.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "05_DNS_&_DNSSEC/01_About_DNS.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "05%20DNS%20&%20DNSSEC/02_DNS_Complexity.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "05_DNS_&_DNSSEC/02_DNS_Complexity.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "05%20DNS%20&%20DNSSEC/03_How_DNS_Works.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "05_DNS_&_DNSSEC/03_How_DNS_Works.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "05%20DNS%20&%20DNSSEC/04_DNS_Domains.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "05_DNS_&_DNSSEC/04_DNS_Domains.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "05%20DNS%20&%20DNSSEC/05_DNSSEC_Necessity.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "05_DNS_&_DNSSEC/05_DNSSEC_Necessity.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "05%20DNS%20&%20DNSSEC/06_DNSSEC_Mechanics.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "05_DNS_&_DNSSEC/06_DNSSEC_Mechanics.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "05%20DNS%20&%20DNSSEC/07_DNSSEC_Chain_of_Trust.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "05_DNS_&_DNSSEC/07_DNSSEC_Chain_of_Trust.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "05%20DNS%20&%20DNSSEC/08_DNSSEC_Root_Signing.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "05_DNS_&_DNSSEC/08_DNSSEC_Root_Signing.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "06%20Cloud%20Computing/01_Cloud_Computing_Overview.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "06_Cloud_Computing/01_Cloud_Computing_Overview.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "06%20Cloud%20Computing/02_Cloud_Models_Comparison.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "06_Cloud_Computing/02_Cloud_Models_Comparison.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "06%20Cloud%20Computing/03_IAAS_PAAS_SAAS.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "06_Cloud_Computing/03_IAAS_PAAS_SAAS.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "07%20Misc%20Technologies/01_Kubernetes.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "07_Misc_Technologies/01_Kubernetes.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "07%20Misc%20Technologies/02_RPO_RTO.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "07_Misc_Technologies/02_RPO_RTO.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "07%20Misc%20Technologies/03_YAML.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "07_Misc_Technologies/03_YAML.html"
+        }
+    }
+    routing_rule {
+        condition {
+            key_prefix_equals = "07%20Misc%20Technologies/04_JSON.html"
+        }
+        redirect {
+            host_name          = "www.kjellhysjulien.com"
+            http_redirect_code = "301"
+            protocol           = "https"
+            replace_key_with   = "07_Misc_Technologies/04_JSON.html"
+        }
+    }
+}
+
+# aws_s3_bucket_website_configuration.www_redirect:
+resource "aws_s3_bucket_website_configuration" "www_redirect" {
+    bucket           = "www.kjellhysjulien.com"
+    id               = "www.kjellhysjulien.com"
+    website_domain   = "s3-website-us-east-1.amazonaws.com"
+    website_endpoint = "www.kjellhysjulien.com.s3-website-us-east-1.amazonaws.com"
+
+    redirect_all_requests_to {
+        host_name = "kjellhysjulien.com"
+        protocol  = "https"
+    }
+}
