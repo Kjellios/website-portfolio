@@ -1,15 +1,36 @@
+# === AWS Provider ===
 provider "aws" {
   region = "us-east-1"
 }
 
-# === S3 Buckets ===
-
-# Main website bucket
+# === Main website bucket ===
 resource "aws_s3_bucket" "root_site" {
-  bucket = "kjellhysjulien.com"
-  force_destroy = true
+  bucket         = "kjellhysjulien.com"
+  force_destroy  = true
 }
 
+# Enable public access block for root bucket
+resource "aws_s3_bucket_public_access_block" "root_site" {
+  bucket = aws_s3_bucket.root_site.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# Enable SSE-S3 encryption for root bucket
+resource "aws_s3_bucket_server_side_encryption_configuration" "root_site" {
+  bucket = aws_s3_bucket.root_site.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+# Website configuration for root bucket
 resource "aws_s3_bucket_website_configuration" "root_site" {
   bucket = aws_s3_bucket.root_site.id
 
@@ -22,18 +43,67 @@ resource "aws_s3_bucket_website_configuration" "root_site" {
   }
 }
 
-# www redirect bucket
+# === www redirect bucket ===
 resource "aws_s3_bucket" "www_redirect" {
-  bucket = "www.kjellhysjulien.com"
+  bucket        = "www.kjellhysjulien.com"
   force_destroy = true
 }
 
+# Public access block for www bucket
+resource "aws_s3_bucket_public_access_block" "www_redirect" {
+  bucket = aws_s3_bucket.www_redirect.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# SSE-S3 encryption for www bucket
+resource "aws_s3_bucket_server_side_encryption_configuration" "www_redirect" {
+  bucket = aws_s3_bucket.www_redirect.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+# Redirect configuration for www bucket
 resource "aws_s3_bucket_website_configuration" "www_redirect" {
   bucket = aws_s3_bucket.www_redirect.id
 
   redirect_all_requests_to {
     host_name = "kjellhysjulien.com"
     protocol  = "https"
+  }
+}
+
+# === Log bucket ===
+resource "aws_s3_bucket" "log_bucket" {
+  bucket        = "logs.kjellhysjulien.com"
+  force_destroy = true
+}
+
+# Public access block for log bucket
+resource "aws_s3_bucket_public_access_block" "log_bucket" {
+  bucket = aws_s3_bucket.log_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# SSE-S3 encryption for log bucket
+resource "aws_s3_bucket_server_side_encryption_configuration" "log_bucket" {
+  bucket = aws_s3_bucket.log_bucket.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
   }
 }
 
