@@ -1,0 +1,21 @@
+# Windows thumbnail cache files
+Thumbs.db
+ehthumbs.db
+
+# Folder config files
+Desktop.ini
+
+# Mac files that might not be useful on Windows
+.DS_Store
+
+# Log files and database files
+*.log
+*.sql
+*.sqlite
+
+# Node modules
+node_modules/
+
+# Development tools config files
+.env
+.vscode/

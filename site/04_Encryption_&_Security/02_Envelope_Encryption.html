@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Envelope Encryption</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <div class="w3-top">
+    <div class="w3-bar w3-theme w3-top w3-left-align w3-large">
+      <a class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white w3-large w3-theme-l1"
+        href="javascript:void(0)" onclick="w3_open()"><i class="fa fa-bars"></i></a>
+      <span class="w3-bar-item w3-theme-l1">Networking Notes</span>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <nav class="w3-sidebar w3-bar-block w3-collapse w3-large w3-theme-l5 w3-animate-left" id="mySidebar">
+    <a href="javascript:void(0)" onclick="w3_close()"
+      class="w3-right w3-xlarge w3-padding-large w3-hover-black w3-hide-large" title="Close Menu">
+      <i class="fa fa-remove"></i>
+    </a>
+
+    <h4 class="w3-bar-item"><b>Menu</b></h4>
+
+    <!-- Homescreen Button -->
+    <a href="../index.html" class="home-button w3-bar-item">Home</a>
+
+    <!-- Network Basics Dropdown -->
+    <div class="w3-dropdown-click">
+      <button onclick="myFunction()" class="w3-button w3-block w3-left-align">
+        Network Basics <i class="fa fa-caret-down"></i>
+      </button>
+      <div id="Network Basics" class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="../01_Network_Basics/00_Network_Fundamentals.html" class="w3-bar-item w3-button">Network Fundamentals</a>
+        <a href="../01_Network_Basics/01_Binary_Conversion.html" class="w3-bar-item w3-button">Binary Conversion</a>
+        <a href="../01_Network_Basics/02_Layer1_Physical.html" class="w3-bar-item w3-button">Layer 1 - Physical</a>
+        <a href="../01_Network_Basics/03_Layer2_DataLink.html" class="w3-bar-item w3-button">Layer 2 - Data Link Layer</a>
+        <a href="../01_Network_Basics/04_Layer3_Network.html" class="w3-bar-item w3-button">Layer 3 - Network</a>
+        <a href="../01_Network_Basics/05_Layer4_Transport.html" class="w3-bar-item w3-button">Layer 4 - Transport</a>
+        <a href="../01_Network_Basics/06_Layer5_Session.html" class="w3-bar-item w3-button">Layer 5 - Session</a>
+        <a href="../01_Network_Basics/07_Layer6_Presentation.html" class="w3-bar-item w3-button">Layer 6 - Presentation</a>
+        <a href="../01_Network_Basics/08_Layer7_Application.html" class="w3-bar-item w3-button">Layer 7 - Application</a>
+      </div>
+    </div>
+
+    <!-- Network Security Dropdown -->
+    <div class="w3-dropdown-click">
+      <button onclick="myFunction2()" class="w3-button w3-block w3-left-align">Network Security <i class="fa fa-caret-down"></i>
+      </button>
+      <div id="Network Security" class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="../02_Network_Security/01_Network_Address_Translation.html" class="w3-bar-item w3-button">Network Address Translation</a>
+        <a href="../02_Network_Security/02_Stateful_vs_Stateless_Firewalls.html" class="w3-bar-item w3-button">Firewalls: Stateful vs Stateless</a>
+        <a href="../02_Network_Security/03_SSL_TLS.html" class="w3-bar-item w3-button">SSL and TLS</a>
+        <a href="../02_Network_Security/04_Border_Gateway_Protocol_BGP.html" class="w3-bar-item w3-button">BGP Protocol</a>
+        <a href="../02_Network_Security/05_IPSec_VPN.html" class="w3-bar-item w3-button">IP Sec VPN</a>
+      </div>
+    </div>
+
+    <!-- Network Infrastructure Dropdown -->
+    <div class="w3-dropdown-click">
+      <button onclick="myFunction3()" class="w3-button w3-block w3-left-align"> Network Infrastructure <i class="fa fa-caret-down"></i>
+      </button>
+      <div id="Network Infrastructure" class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="../03_Network_Infrastructure/01_IP_Address_Space_Subnetting.html" class="w3-bar-item w3-button">IP Addressing and Subnetting</a>
+        <a href="../03_Network_Infrastructure/02_DDOS_Attacks.html" class="w3-bar-item w3-button">DDOS Attacks</a>
+        <a href="../03_Network_Infrastructure/03_VLANs_Trunks_QinQ.html" class="w3-bar-item w3-button">VLANs and TRUNKS</a>
+        <a href="../03_Network_Infrastructure/04_JumboFrames.html" class="w3-bar-item w3-button">Jumbo Frames</a>
+        <a href="../03_Network_Infrastructure/05_Fibre_Optic_Cable.html" class="w3-bar-item w3-button">Fibre Optic Cable</a>
+      </div>
+    </div>
+
+    <!-- Encryption & Security Dropdown -->
+    <div class="w3-dropdown-click">
+      <button onclick="myFunction4()" class="w3-button w3-block w3-left-align"> Encryption & Security <i class="fa fa-caret-down"></i>
+      </button>
+      <div id="Encryption & Security" class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="01_Encryption.html" class="w3-bar-item w3-button">Encryption Overview</a>
+        <a href="02_Envelope_Encryption.html" class="w3-bar-item w3-button">Envelope Encryption</a>
+        <a href="03_Hardware_Security_Modules_HSMs.html" class="w3-bar-item w3-button">HSMs</a>
+        <a href="04_Hash_Functions_Hashing.html" class="w3-bar-item w3-button">Hash Functions</a>
+        <a href="05_Digital_Signatures.html" class="w3-bar-item w3-button">Digital Signatures</a>
+      </div>
+    </div>
+
+    <!-- DNS & DNSSEC Dropdown -->
+    <div class="w3-dropdown-click">
+      <button onclick="myFunction5()" class="w3-button w3-block w3-left-align"> DNS & DNSSEC <i class="fa fa-caret-down"></i>
+      </button>
+      <div id="DNS & DNSSEC" class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="../05_DNS_&_DNSSEC/01_About_DNS.html" class="w3-bar-item w3-button">DNS Overview</a>
+        <a href="../05_DNS_&_DNSSEC/02_DNS_Complexity.html" class="w3-bar-item w3-button">Understanding DNS Complexity</a>
+        <a href="../05_DNS_&_DNSSEC/03_How_DNS_Works.html" class="w3-bar-item w3-button">DNS Mechanics</a>
+        <a href="../05_DNS_&_DNSSEC/04_DNS_Domains.html" class="w3-bar-item w3-button">DNS Domains</a>
+        <a href="../05_DNS_&_DNSSEC/05_DNSSEC_Necessity.html" class="w3-bar-item w3-button">Why DNSSEC?</a>
+        <a href="../05_DNS_&_DNSSEC/06_DNSSEC_Mechanics.html" class="w3-bar-item w3-button">DNSSEC Mechanics</a>
+        <a href="../05_DNS_&_DNSSEC/07_DNSSEC_Chain_of_Trust.html" class="w3-bar-item w3-button">Chain of Trust in DNSSEC</a>
+        <a href="../05_DNS_&_DNSSEC/08_DNSSEC_Root_Signing.html" class="w3-bar-item w3-button">DNSSEC Root Signing</a>
+      </div>
+    </div>
+
+    <!-- Cloud Computing Dropdown -->
+    <div class="w3-dropdown-click">
+      <button onclick="myFunction6()" class="w3-button w3-block w3-left-align">Cloud Computing <i class="fa fa-caret-down"></i>
+      </button>
+      <div id="Cloud Computing" class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="../06_Cloud_Computing/01_Cloud_Computing_Overview.html" class="w3-bar-item w3-button">Cloud Computing Basics</a>
+        <a href="../06_Cloud_Computing/02_Cloud_Models_Comparison.html" class="w3-bar-item w3-button">Cloud Models Comparison</a>
+        <a href="../06_Cloud_Computing/03_IAAS_PAAS_SAAS.html" class="w3-bar-item w3-button">IAAS vs PAAS vs SAAS</a>
+      </div>
+    </div>
+
+    <!-- Misc Technologies Dropdown -->
+    <div class="w3-dropdown-click">
+      <button onclick="myFunction7()" class="w3-button w3-block w3-left-align">Misc Technologies <i class="fa fa-caret-down"></i>
+      </button>
+      <div id="Misc Technologies" class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="../07_Misc_Technologies/01_Kubernetes.html" class="w3-bar-item w3-button">Kubernetes</a>
+        <a href="../07_Misc_Technologies/02_RPO_RTO.html" class="w3-bar-item w3-button">RPO & RTO</a>
+        <a href="../07_Misc_Technologies/03_YAML.html" class="w3-bar-item w3-button">YAML</a>
+        <a href="../07_Misc_Technologies/04_JSON.html" class="w3-bar-item w3-button">JSON</a>
+      </div>
+    </div>
+
+  </nav>
+
+  <!-- Overlay effect when opening sidebar on small screens -->
+  <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu"
+    id="myOverlay"></div>
+
+  <!-- Main content: shift it to the right by 250 pixels when the sidebar is visible -->
+  <div class="w3-main" style="margin-left:250px">
+
+    <div class="w3-row w3-padding-64">
+      <div class="w3- w3-whole w3-container">
+
+        <!-- START NOTES HERE-->
+
+        <h1>Envelope Encryption</h1>
+        <ol>
+            <li>
+                <strong>Introduction to Envelope Encryption</strong>
+                <ul>
+                    <li><strong>Definition</strong>: Envelope encryption is a method of encrypting data where a data encryption key (DEK) is used to encrypt the data, and then the DEK itself is encrypted with a key encryption key (KEK).</li>
+                    <li><strong>Purpose</strong>: To enhance data security by separating the encryption of data from the encryption of the key that protects the data.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>How Envelope Encryption Works</strong>
+                <ul>
+                    <li><strong>Data Encryption</strong>: Data is encrypted using the DEK.</li>
+                    <li><strong>Key Encryption</strong>: The DEK is then encrypted with the KEK.</li>
+                    <li><strong>Secure Storage</strong>: The encrypted data and the encrypted DEK are stored, while the KEK is managed separately, often by a key management service.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Components of Envelope Encryption</strong>
+                <ul>
+                    <li><strong>Data Encryption Key (DEK)</strong>: Used for encrypting and decrypting the actual data.</li>
+                    <li><strong>Key Encryption Key (KEK)</strong>: Used to encrypt and decrypt the DEK.</li>
+                    <li><strong>Key Management System</strong>: Securely manages KEKs, often including rotation and access policies.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Advantages of Envelope Encryption</strong>
+                <ul>
+                    <li><strong>Security</strong>: Provides an additional layer of security by encrypting the encryption key itself.</li>
+                    <li><strong>Scalability</strong>: Efficient for encrypting large volumes of data or numerous data files.</li>
+                    <li><strong>Key Management</strong>: Simplifies key management, especially in cloud environments.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Use Cases for Envelope Encryption</strong>
+                <ul>
+                    <li><strong>Cloud Storage</strong>: Protecting data stored in cloud services.</li>
+                    <li><strong>Database Encryption</strong>: Securing sensitive data in databases.</li>
+                    <li><strong>Enterprise Security</strong>: Where sensitive data is frequently accessed and modified.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Implementing Envelope Encryption</strong>
+                <ul>
+                    <li><strong>Integration</strong>: Incorporating into applications and systems that handle sensitive data.</li>
+                    <li><strong>Key Management Service Providers</strong>: Utilizing services from cloud providers like AWS KMS, Azure Key Vault, or Google Cloud KMS.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Envelope Encryption and Compliance</strong>
+                <ul>
+                    <li><strong>Regulatory Compliance</strong>: Meeting standards and regulations that require robust encryption practices.</li>
+                    <li><strong>Audit and Control</strong>: Facilitating auditing and access control by segregating data access from key access.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Challenges and Considerations</strong>
+                <ul>
+                    <li><strong>Complexity</strong>: Managing the encryption and decryption processes and the associated keys.</li>
+                    <li><strong>Performance</strong>: Balancing encryption security with system performance.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Best Practices in Envelope Encryption</strong>
+                <ul>
+                    <li><strong>Regular Key Rotation</strong>: Periodically rotating KEKs for enhanced security.</li>
+                    <li><strong>Access Control</strong>: Implementing strict access controls for KEKs.</li>
+                    <li><strong>Backup and Recovery</strong>: Ensuring encrypted data and keys can be recovered in case of loss.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Future Outlook</strong>
+                <ul>
+                    <li><strong>Technological Developments</strong>: Advances in key management and encryption algorithms.</li>
+                    <li><strong>Increasing Adoption</strong>: More widespread use as organizations move to cloud-based solutions.</li>
+                </ul>
+            </li>
+        </ol>
+        <h2>Conclusion</h2>
+        <ul>
+            <li><strong>Summary</strong>: Envelope encryption is a powerful technique for securing data, particularly in complex and large-scale environments.</li>
+            <li><strong>Strategic Importance</strong>: An essential component of a comprehensive data security strategy, especially in cloud computing.</li>
+        </ul>
+
+    <!-- END NOTES HERE -->
+
+    <script src="../script.js"></script>
+
+</body>
+
+</html>
