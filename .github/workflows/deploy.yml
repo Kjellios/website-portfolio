@@ -25,7 +25,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Sync files to S3
-        run: aws s3 sync ./ s3://kjellhysjulien.com --delete
+	run: aws s3 sync ./site/ s3://kjellhysjulien.com --delete
 
       - name: Invalidate CloudFront cache
         run: |
