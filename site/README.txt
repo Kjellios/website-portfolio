@@ -1,31 +1,34 @@
-Paradigm Shift by HTML5 UP
-html5up.net | @ajlkn
-Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+# Personal Website: kjellhysjulien.com
 
+This project hosts the static content for my personal website, deployed on AWS using Terraform.
 
-Say hello to Paradigm Shift, my first addition to HTML5 UP in more than a year (!!!).
-Took things in a slightly different direction with this one, partly to mess with CSS
-grid (which this one relies on pretty heavily) but mostly to get back to making weirder
-and more experimental designs/layouts. Anyway, hope you dig it, and thanks for the
-continued support despite the lack of updates :)
+## Overview
 
-Demo images* courtesy of Unsplash, a radtastic collection of CC0 (public domain) images
-you can use for pretty much whatever.
+The site is designed as a professional and educational hub, showcasing:
+- My resume and background
+- AWS/cloud-focused learning notes
+- A custom study guide for the AWS Certified Solutions Architect – Associate exam
 
-(* = not included)
+## Infrastructure
 
-AJ
-aj@lkn.io | @ajlkn
+Built using the following AWS services:
+- **S3** (for private file storage, served via CloudFront)
+- **CloudFront** (CDN for HTTPS delivery and caching)
+- **Route 53** (DNS management)
+- **ACM** (SSL certificates for HTTPS)
+- **Terraform** (infrastructure as code)
 
+## Key Details
 
-Credits:
+- **Primary domain**: https://kjellhysjulien.com  
+- **Subdomain redirect**: https://www.kjellhysjulien.com → root domain  
+- **HTTPS** enforced via CloudFront with an ACM certificate  
+- **Logging** enabled via S3  
+- **Static content** is uploaded to a private S3 bucket and served securely through CloudFront.
 
-	Demo Images:
-		Unsplash (unsplash.com)
+## Deployment Notes
 
-	Icons:
-		Font Awesome (fontawesome.io)
-
-	Other:
-		jQuery (jquery.com)
-		Responsive Tools (github.com/ajlkn/responsive-tools)
+- All infrastructure is defined in `main.tf`
+- Uses Terraform’s `aws` provider (region: `us-east-1`)
+- CloudFront cache may need manual invalidation when updating content
+- IAM access and permissions tightly scoped for security
