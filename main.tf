@@ -6,38 +6,10 @@ provider "aws" {
 
 # Main website bucket
 resource "aws_s3_bucket" "root_site" {
-  bucket         = "kjellhysjulien.com"
-  force_destroy  = true
+  bucket = "kjellhysjulien.com"
+  force_destroy = true
 }
 
-# Public access block for root site bucket (allows public reads)
-resource "aws_s3_bucket_public_access_block" "root_site" {
-  bucket                  = aws_s3_bucket.root_site.id
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-}
-
-# Bucket policy to allow public read access for website files
-resource "aws_s3_bucket_policy" "root_site_policy" {
-  bucket = aws_s3_bucket.root_site.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid       = "PublicReadGetObject"
-        Effect    = "Allow"
-        Principal = "*"
-        Action    = "s3:GetObject"
-        Resource  = "${aws_s3_bucket.root_site.arn}/*"
-      }
-    ]
-  })
-}
-
-# Website config for root site
 resource "aws_s3_bucket_website_configuration" "root_site" {
   bucket = aws_s3_bucket.root_site.id
 
@@ -50,9 +22,9 @@ resource "aws_s3_bucket_website_configuration" "root_site" {
   }
 }
 
-# www bucket (redirects to root)
+# www redirect bucket
 resource "aws_s3_bucket" "www_redirect" {
-  bucket        = "www.kjellhysjulien.com"
+  bucket = "www.kjellhysjulien.com"
   force_destroy = true
 }
 
@@ -65,13 +37,71 @@ resource "aws_s3_bucket_website_configuration" "www_redirect" {
   }
 }
 
-# Log bucket
+# Logging bucket for CloudFront
 resource "aws_s3_bucket" "log_bucket" {
-  bucket        = "logs.kjellhysjulien.com"
+  bucket = "logs.kjellhysjulien.com"
   force_destroy = true
 }
 
-# === CloudFront Distribution ===
+# Policy to allow CloudFront to write logs
+resource "aws_s3_bucket_policy" "log_bucket_policy" {
+  bucket = aws_s3_bucket.log_bucket.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "CloudFrontLogsWrite"
+        Effect    = "Allow"
+        Principal = {
+          Service = "cloudfront.amazonaws.com"
+        }
+        Action    = "s3:PutObject"
+        Resource  = "${aws_s3_bucket.log_bucket.arn}/cloudfront/*"
+        Condition = {
+          StringEquals = {
+            "AWS:SourceArn" = aws_cloudfront_distribution.website_cdn.arn
+          }
+        }
+      }
+    ]
+  })
+}
+
+# === ACM Certificate (automated validation) ===
+
+resource "aws_acm_certificate" "cert" {
+  domain_name               = "kjellhysjulien.com"
+  validation_method         = "DNS"
+  subject_alternative_names = ["www.kjellhysjulien.com"]
+}
+
+resource "aws_route53_zone" "primary" {
+  name = "kjellhysjulien.com"
+}
+
+resource "aws_route53_record" "cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
+      name  = dvo.resource_record_name
+      type  = dvo.resource_record_type
+      value = dvo.resource_record_value
+    }
+  }
+
+  zone_id = aws_route53_zone.primary.zone_id
+  name    = each.value.name
+  type    = each.value.type
+  ttl     = 300
+  records = [each.value.value]
+}
+
+resource "aws_acm_certificate_validation" "cert" {
+  certificate_arn         = aws_acm_certificate.cert.arn
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+}
+
+# === CloudFront CDN ===
 
 resource "aws_cloudfront_distribution" "website_cdn" {
   enabled             = true
@@ -91,11 +121,11 @@ resource "aws_cloudfront_distribution" "website_cdn" {
     origin_id   = "kjellhysjulien.com.s3-website-us-east-1.amazonaws.com"
 
     custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-      origin_read_timeout    = 30
+      http_port                = 80
+      https_port               = 443
+      origin_protocol_policy   = "http-only"
+      origin_ssl_protocols     = ["TLSv1.2"]
+      origin_read_timeout      = 30
       origin_keepalive_timeout = 5
     }
 
@@ -130,7 +160,7 @@ resource "aws_cloudfront_distribution" "website_cdn" {
   }
 
   viewer_certificate {
-    acm_certificate_arn            = "arn:aws:acm:us-east-1:843785657965:certificate/00c8e041-bf4b-408c-b30a-12149e298e22"
+    acm_certificate_arn            = aws_acm_certificate.cert.arn
     ssl_support_method             = "sni-only"
     minimum_protocol_version       = "TLSv1.2_2021"
     cloudfront_default_certificate = false
@@ -138,7 +168,7 @@ resource "aws_cloudfront_distribution" "website_cdn" {
 
   logging_config {
     include_cookies = false
-    bucket          = "logs.kjellhysjulien.com.s3.amazonaws.com"
+    bucket          = "${aws_s3_bucket.log_bucket.bucket}.s3.amazonaws.com"
     prefix          = "cloudfront/"
   }
 
@@ -147,40 +177,35 @@ resource "aws_cloudfront_distribution" "website_cdn" {
   }
 }
 
-# === Route 53 DNS ===
+# === Route 53 DNS Records ===
 
-# Hosted zone
-resource "aws_route53_zone" "primary" {
-  name = "kjellhysjulien.com"
-}
-
-# A record (root domain -> CloudFront)
+# Root domain A record → CloudFront
 resource "aws_route53_record" "root_a" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "kjellhysjulien.com"
   type    = "A"
 
   alias {
-    name                   = "dka09xss205q1.cloudfront.net"
+    name                   = aws_cloudfront_distribution.website_cdn.domain_name
     zone_id                = "Z2FDTNDATAQYW2"
     evaluate_target_health = false
   }
 }
 
-# A record (www -> CloudFront)
+# www subdomain A record → CloudFront
 resource "aws_route53_record" "www_a" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "www.kjellhysjulien.com"
   type    = "A"
 
   alias {
-    name                   = "dka09xss205q1.cloudfront.net"
+    name                   = aws_cloudfront_distribution.website_cdn.domain_name
     zone_id                = "Z2FDTNDATAQYW2"
     evaluate_target_health = false
   }
 }
 
-# TXT record for Google Site Verification
+# TXT record for Google site verification
 resource "aws_route53_record" "google_verification" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "kjellhysjulien.com"
@@ -189,25 +214,7 @@ resource "aws_route53_record" "google_verification" {
   records = ["\"google-site-verification=I8hWClMINMc-m-9zQ08YApAz6CC52DIu0T00hZ-h0Ms\""]
 }
 
-# ACM validation for root domain
-resource "aws_route53_record" "acm_validation_root" {
-  zone_id = aws_route53_zone.primary.zone_id
-  name    = "_937f42ec8885746b4f6b190025185e1f.kjellhysjulien.com"
-  type    = "CNAME"
-  ttl     = 300
-  records = ["_69156284e4bedb7e897130575c24a390.mhbtsbpdnt.acm-validations.aws."]
-}
-
-# ACM validation for www subdomain
-resource "aws_route53_record" "acm_validation_www" {
-  zone_id = aws_route53_zone.primary.zone_id
-  name    = "_5037de2fa190580de504e2b1256d1a7e.www.kjellhysjulien.com"
-  type    = "CNAME"
-  ttl     = 300
-  records = ["_2a16d490270f0ca013127b9a8077abcc.mhbtsbpdnt.acm-validations.aws."]
-}
-
-# NS record for root domain (if needed manually)
+# Optional: NS record (only needed for subdomain delegation, not root)
 resource "aws_route53_record" "ns" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "kjellhysjulien.com"
