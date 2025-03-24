@@ -2,12 +2,42 @@ provider "aws" {
   region = "us-east-1"
 }
 
+# === S3 Buckets ===
+
 # Main website bucket
 resource "aws_s3_bucket" "root_site" {
-  bucket = "kjellhysjulien.com"
-  force_destroy = true
+  bucket         = "kjellhysjulien.com"
+  force_destroy  = true
 }
 
+# Public access block for root site bucket (allows public reads)
+resource "aws_s3_bucket_public_access_block" "root_site" {
+  bucket                  = aws_s3_bucket.root_site.id
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+# Bucket policy to allow public read access for website files
+resource "aws_s3_bucket_policy" "root_site_policy" {
+  bucket = aws_s3_bucket.root_site.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "PublicReadGetObject"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.root_site.arn}/*"
+      }
+    ]
+  })
+}
+
+# Website config for root site
 resource "aws_s3_bucket_website_configuration" "root_site" {
   bucket = aws_s3_bucket.root_site.id
 
@@ -22,7 +52,7 @@ resource "aws_s3_bucket_website_configuration" "root_site" {
 
 # www bucket (redirects to root)
 resource "aws_s3_bucket" "www_redirect" {
-  bucket = "www.kjellhysjulien.com"
+  bucket        = "www.kjellhysjulien.com"
   force_destroy = true
 }
 
@@ -37,11 +67,12 @@ resource "aws_s3_bucket_website_configuration" "www_redirect" {
 
 # Log bucket
 resource "aws_s3_bucket" "log_bucket" {
-  bucket = "logs.kjellhysjulien.com"
+  bucket        = "logs.kjellhysjulien.com"
   force_destroy = true
 }
 
-# CloudFront distribution (placeholder for import)
+# === CloudFront Distribution ===
+
 resource "aws_cloudfront_distribution" "website_cdn" {
   enabled             = true
   is_ipv6_enabled     = true
@@ -116,12 +147,14 @@ resource "aws_cloudfront_distribution" "website_cdn" {
   }
 }
 
-# Route 53 Hosted Zone
+# === Route 53 DNS ===
+
+# Hosted zone
 resource "aws_route53_zone" "primary" {
   name = "kjellhysjulien.com"
 }
 
-# Root A Record (alias to CloudFront)
+# A record (root domain -> CloudFront)
 resource "aws_route53_record" "root_a" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "kjellhysjulien.com"
@@ -134,7 +167,7 @@ resource "aws_route53_record" "root_a" {
   }
 }
 
-# www A Record (alias to CloudFront)
+# A record (www -> CloudFront)
 resource "aws_route53_record" "www_a" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "www.kjellhysjulien.com"
@@ -147,7 +180,7 @@ resource "aws_route53_record" "www_a" {
   }
 }
 
-# TXT Verification Record
+# TXT record for Google Site Verification
 resource "aws_route53_record" "google_verification" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "kjellhysjulien.com"
@@ -156,7 +189,7 @@ resource "aws_route53_record" "google_verification" {
   records = ["\"google-site-verification=I8hWClMINMc-m-9zQ08YApAz6CC52DIu0T00hZ-h0Ms\""]
 }
 
-# ACM Validation Record for root domain
+# ACM validation for root domain
 resource "aws_route53_record" "acm_validation_root" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "_937f42ec8885746b4f6b190025185e1f.kjellhysjulien.com"
@@ -165,7 +198,7 @@ resource "aws_route53_record" "acm_validation_root" {
   records = ["_69156284e4bedb7e897130575c24a390.mhbtsbpdnt.acm-validations.aws."]
 }
 
-# ACM Validation Record for www subdomain
+# ACM validation for www subdomain
 resource "aws_route53_record" "acm_validation_www" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "_5037de2fa190580de504e2b1256d1a7e.www.kjellhysjulien.com"
@@ -174,7 +207,7 @@ resource "aws_route53_record" "acm_validation_www" {
   records = ["_2a16d490270f0ca013127b9a8077abcc.mhbtsbpdnt.acm-validations.aws."]
 }
 
-# NS Record (root zone)
+# NS record for root domain (if needed manually)
 resource "aws_route53_record" "ns" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "kjellhysjulien.com"
@@ -187,4 +220,3 @@ resource "aws_route53_record" "ns" {
     "ns-288.awsdns-36.com.",
   ]
 }
-
