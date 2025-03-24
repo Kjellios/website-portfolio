@@ -1,3 +1,4 @@
+# Block specific crawlers that don't add value
 User-agent: SemrushBot
 Disallow: /
 
@@ -10,7 +11,11 @@ Disallow: /
 User-agent: AhrefsBot
 Disallow: /
 
+# General rules for all other bots
 User-agent: *
 Disallow: /tmp/
 Disallow: /private/
-Disallow: /404-page
+
+# Point to sitemap for search engines
+Sitemap: https://kjellhysjulien.com/sitemap.xml
+
