@@ -1,36 +1,40 @@
 # === Terraform ===
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
 .terraform/
-.terraform.lock.hcl
 crash.log
 override.tf
 override.tf.json
 terraform.tfvars
 
+# Lock file is safe to commit for provider/version pinning
+# .terraform.lock.hcl
+
+# === Secrets (never commit these) ===
+.env
+*.pem
+*.key
+*.crt
+.aws/
+
 # === macOS ===
 .DS_Store
-
-# === Node.js (if ever used for frontend logic) ===
-node_modules/
-dist/
-build/
-
-# === VS Code ===
-.vscode/
-
-# === Python (if scripts are added later) ===
-__pycache__/
-*.py[cod]
 
 # === Logs ===
 *.log
 
-# === AWS credentials or other secrets (should never be committed) ===
-.aws/
-*.pem
-*.key
-*.crt
-.env
+# === VS Code ===
+.vscode/
 
+# === Node.js (optional frontend logic) ===
+node_modules/
+dist/
+build/
+
+# === Python (if added later) ===
+__pycache__/
+*.py[cod]
+
+# === Local Repos ===
 kjellhysjulien-website.git/
+
