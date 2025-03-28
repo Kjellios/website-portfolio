@@ -7,6 +7,15 @@ provider "aws" {
 resource "aws_s3_bucket" "root_site" {
   bucket         = "kjellhysjulien.com"
   force_destroy  = true
+
+  versioning {
+    enabled = true
+  }
+
+  logging {
+    target_bucket = aws_s3_bucket.log_bucket.id
+    target_prefix = "root-site/"
+  }
 }
 
 # Enable public access block for root bucket
@@ -47,6 +56,15 @@ resource "aws_s3_bucket_website_configuration" "root_site" {
 resource "aws_s3_bucket" "www_redirect" {
   bucket        = "www.kjellhysjulien.com"
   force_destroy = true
+
+  versioning {
+    enabled = true
+  }
+
+  logging {
+    target_bucket = aws_s3_bucket.log_bucket.id
+    target_prefix = "www-redirect/"
+  }
 }
 
 # Public access block for www bucket
@@ -84,6 +102,15 @@ resource "aws_s3_bucket_website_configuration" "www_redirect" {
 resource "aws_s3_bucket" "log_bucket" {
   bucket        = "logs.kjellhysjulien.com"
   force_destroy = true
+
+  versioning {
+    enabled = true
+  }
+
+  logging {
+    target_bucket = aws_s3_bucket.log_bucket.id
+    target_prefix = "logs/"
+  }
 }
 
 # Public access block for log bucket
@@ -105,12 +132,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "log_bucket" {
       sse_algorithm = "AES256"
     }
   }
-}
-
-# Logging bucket for CloudFront
-resource "aws_s3_bucket" "log_bucket" {
-  bucket = "logs.kjellhysjulien.com"
-  force_destroy = true
 }
 
 # Policy to allow CloudFront to write logs
