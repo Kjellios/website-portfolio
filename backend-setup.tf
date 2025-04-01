@@ -1,13 +1,9 @@
 # This sets up an S3 bucket with versioning and encryption, and a DynamoDB table with on-demand billing and tagging for locking.
 
-provider "aws" {
-  region = "us-east-1"
-}
-
 # Terraform State Storage Bucket
 resource "aws_s3_bucket" "terraform_state" {
-  bucket         = "terraform-state-kjell"
-  force_destroy  = true
+  bucket        = "terraform-state-kjell"
+  force_destroy = true
 
   tags = {
     Name        = "Terraform State Bucket"
