@@ -23,6 +23,7 @@ safe.plan
 
 # === Logs ===
 *.log
+imported.txt
 
 # === VS Code ===
 .vscode/
@@ -38,4 +39,7 @@ __pycache__/
 
 # === Local Repos ===
 kjellhysjulien-website.git/
+
+# === Local Terraform Backups ===
+_backups/
 
