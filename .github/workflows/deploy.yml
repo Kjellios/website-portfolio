@@ -1,9 +1,10 @@
+# .github/workflows/deploy.yml
+
 name: Deploy Website to S3 + Invalidate CloudFront
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   id-token: write
@@ -11,25 +12,30 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy to AWS
+    name: Deploy Static Site
     runs-on: ubuntu-latest
 
+    env:
+      AWS_REGION: us-east-1
+      S3_BUCKET: kjellhysjulien.com
+      CLOUDFRONT_DISTRIBUTION_ID: E1M6WG52DZEBP1
+
     steps:
-      - name: Checkout repo content
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials using OIDC
+      - name: Configure AWS credentials with OIDC
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::843785657965:role/GitHubActionsOIDCRole
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
-      - name: Sync site files to S3
-        run: aws s3 sync ./site/ s3://kjellhysjulien.com --delete
+      - name: Sync files to S3
+        run: aws s3 sync ./site/ s3://$S3_BUCKET --delete
 
       - name: Invalidate CloudFront cache
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
             --paths "/*"
 
