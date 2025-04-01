@@ -6,6 +6,7 @@ crash.log
 override.tf
 override.tf.json
 terraform.tfvars
+safe.plan
 
 # Lock file is safe to commit for provider/version pinning
 # .terraform.lock.hcl

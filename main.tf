@@ -3,22 +3,33 @@ provider "aws" {
   region = "us-east-1"
 }
 
+# === KMS Key for S3 encryption ===
+resource "aws_kms_key" "s3_encryption" {
+  description             = "KMS key for S3 bucket encryption"
+  deletion_window_in_days = 10
+  enable_key_rotation     = true
+}
+
 # === Main website bucket ===
 resource "aws_s3_bucket" "root_site" {
-  bucket         = "kjellhysjulien.com"
-  force_destroy  = true
+  bucket        = "kjellhysjulien.com"
+  force_destroy = true
+}
 
-  versioning {
-    enabled = true
-  }
+resource "aws_s3_bucket_versioning" "root_site" {
+  bucket = aws_s3_bucket.root_site.id
 
-  logging {
-    target_bucket = aws_s3_bucket.log_bucket.id
-    target_prefix = "root-site/"
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
-# Enable public access block for root bucket
+resource "aws_s3_bucket_logging" "root_site" {
+  bucket        = aws_s3_bucket.root_site.id
+  target_bucket = aws_s3_bucket.log_bucket.id
+  target_prefix = "root-site/"
+}
+
 resource "aws_s3_bucket_public_access_block" "root_site" {
   bucket = aws_s3_bucket.root_site.id
 
@@ -28,18 +39,17 @@ resource "aws_s3_bucket_public_access_block" "root_site" {
   restrict_public_buckets = true
 }
 
-# Enable SSE-S3 encryption for root bucket
 resource "aws_s3_bucket_server_side_encryption_configuration" "root_site" {
   bucket = aws_s3_bucket.root_site.id
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      sse_algorithm     = "aws:kms"
+      kms_master_key_id = aws_kms_key.s3_encryption.arn
     }
   }
 }
 
-# Website configuration for root bucket
 resource "aws_s3_bucket_website_configuration" "root_site" {
   bucket = aws_s3_bucket.root_site.id
 
@@ -56,18 +66,22 @@ resource "aws_s3_bucket_website_configuration" "root_site" {
 resource "aws_s3_bucket" "www_redirect" {
   bucket        = "www.kjellhysjulien.com"
   force_destroy = true
+}
 
-  versioning {
-    enabled = true
-  }
+resource "aws_s3_bucket_versioning" "www_redirect" {
+  bucket = aws_s3_bucket.www_redirect.id
 
-  logging {
-    target_bucket = aws_s3_bucket.log_bucket.id
-    target_prefix = "www-redirect/"
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
-# Public access block for www bucket
+resource "aws_s3_bucket_logging" "www_redirect" {
+  bucket        = aws_s3_bucket.www_redirect.id
+  target_bucket = aws_s3_bucket.log_bucket.id
+  target_prefix = "www-redirect/"
+}
+
 resource "aws_s3_bucket_public_access_block" "www_redirect" {
   bucket = aws_s3_bucket.www_redirect.id
 
@@ -77,18 +91,17 @@ resource "aws_s3_bucket_public_access_block" "www_redirect" {
   restrict_public_buckets = true
 }
 
-# SSE-S3 encryption for www bucket
 resource "aws_s3_bucket_server_side_encryption_configuration" "www_redirect" {
   bucket = aws_s3_bucket.www_redirect.id
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      sse_algorithm     = "aws:kms"
+      kms_master_key_id = aws_kms_key.s3_encryption.arn
     }
   }
 }
 
-# Redirect configuration for www bucket
 resource "aws_s3_bucket_website_configuration" "www_redirect" {
   bucket = aws_s3_bucket.www_redirect.id
 
@@ -102,18 +115,22 @@ resource "aws_s3_bucket_website_configuration" "www_redirect" {
 resource "aws_s3_bucket" "log_bucket" {
   bucket        = "logs.kjellhysjulien.com"
   force_destroy = true
+}
 
-  versioning {
-    enabled = true
-  }
+resource "aws_s3_bucket_versioning" "log_bucket" {
+  bucket = aws_s3_bucket.log_bucket.id
 
-  logging {
-    target_bucket = aws_s3_bucket.log_bucket.id
-    target_prefix = "logs/"
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
-# Public access block for log bucket
+resource "aws_s3_bucket_logging" "log_bucket" {
+  bucket        = aws_s3_bucket.log_bucket.id
+  target_bucket = aws_s3_bucket.log_bucket.id
+  target_prefix = "internal-access/"
+}
+
 resource "aws_s3_bucket_public_access_block" "log_bucket" {
   bucket = aws_s3_bucket.log_bucket.id
 
@@ -123,32 +140,32 @@ resource "aws_s3_bucket_public_access_block" "log_bucket" {
   restrict_public_buckets = true
 }
 
-# SSE-S3 encryption for log bucket
 resource "aws_s3_bucket_server_side_encryption_configuration" "log_bucket" {
   bucket = aws_s3_bucket.log_bucket.id
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      sse_algorithm     = "aws:kms"
+      kms_master_key_id = aws_kms_key.s3_encryption.arn
     }
   }
 }
 
-# Policy to allow CloudFront to write logs
+# === Policy to allow CloudFront to write logs ===
 resource "aws_s3_bucket_policy" "log_bucket_policy" {
   bucket = aws_s3_bucket.log_bucket.id
 
   policy = jsonencode({
-    Version = "2012-10-17"
+    Version = "2012-10-17",
     Statement = [
       {
-        Sid       = "CloudFrontLogsWrite"
-        Effect    = "Allow"
+        Sid       = "CloudFrontLogsWrite",
+        Effect    = "Allow",
         Principal = {
           Service = "cloudfront.amazonaws.com"
-        }
-        Action    = "s3:PutObject"
-        Resource  = "${aws_s3_bucket.log_bucket.arn}/cloudfront/*"
+        },
+        Action    = "s3:PutObject",
+        Resource  = "${aws_s3_bucket.log_bucket.arn}/cloudfront/*",
         Condition = {
           StringEquals = {
             "AWS:SourceArn" = aws_cloudfront_distribution.website_cdn.arn
@@ -160,7 +177,6 @@ resource "aws_s3_bucket_policy" "log_bucket_policy" {
 }
 
 # === ACM Certificate (automated validation) ===
-
 resource "aws_acm_certificate" "cert" {
   domain_name               = "kjellhysjulien.com"
   validation_method         = "DNS"
@@ -193,7 +209,6 @@ resource "aws_acm_certificate_validation" "cert" {
 }
 
 # === CloudFront CDN ===
-
 resource "aws_cloudfront_distribution" "website_cdn" {
   enabled             = true
   is_ipv6_enabled     = true
@@ -204,7 +219,7 @@ resource "aws_cloudfront_distribution" "website_cdn" {
 
   aliases = [
     "kjellhysjulien.com",
-    "www.kjellhysjulien.com",
+    "www.kjellhysjulien.com"
   ]
 
   origin {
@@ -269,8 +284,6 @@ resource "aws_cloudfront_distribution" "website_cdn" {
 }
 
 # === Route 53 DNS Records ===
-
-# Root domain A record → CloudFront
 resource "aws_route53_record" "root_a" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "kjellhysjulien.com"
@@ -283,7 +296,6 @@ resource "aws_route53_record" "root_a" {
   }
 }
 
-# www subdomain A record → CloudFront
 resource "aws_route53_record" "www_a" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "www.kjellhysjulien.com"
@@ -296,7 +308,6 @@ resource "aws_route53_record" "www_a" {
   }
 }
 
-# TXT record for Google site verification
 resource "aws_route53_record" "google_verification" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "kjellhysjulien.com"
@@ -305,7 +316,6 @@ resource "aws_route53_record" "google_verification" {
   records = ["\"google-site-verification=I8hWClMINMc-m-9zQ08YApAz6CC52DIu0T00hZ-h0Ms\""]
 }
 
-# Optional: NS record (only needed for subdomain delegation, not root)
 resource "aws_route53_record" "ns" {
   zone_id = aws_route53_zone.primary.zone_id
   name    = "kjellhysjulien.com"
@@ -315,6 +325,6 @@ resource "aws_route53_record" "ns" {
     "ns-1865.awsdns-41.co.uk.",
     "ns-633.awsdns-15.net.",
     "ns-1497.awsdns-59.org.",
-    "ns-288.awsdns-36.com.",
+    "ns-288.awsdns-36.com."
   ]
 }
