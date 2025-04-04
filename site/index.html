@@ -27,51 +27,117 @@
         </header>
         <div class="content">
           <span class="image fill" data-position="center"
-            ><img src="images/profile.jpeg" alt=""
+            ><img src="images/pic01.jpg" alt=""
           /></span>
         </div>
       </section>
 
-<!-- About Me -->
-<section id="about">
+      <!-- About Me -->
+      <section id="about">
+        <header>
+          <h2>About Me</h2>
+        </header>
+        <div class="content">
+          <p>
+            I’m a recent Cloud Engineering Technology graduate with hands-on
+            experience building AWS infrastructure and automating deployments
+            with Terraform and GitHub Actions. Currently seeking an entry-level
+            IT support or help desk role to gain practical experience while
+            further developing my cloud and DevOps skills.
+          </p>
+        </div>
+      </section>
+
+
+<!-- Projects -->
+<section id="projects">
   <header>
-    <h2>About Me</h2>
+    <h2>Projects</h2>
+  </header>
+  <div class="content">
+
+<!-- Project 1: AWS Portfolio Site -->
+<section>
+  <header>
+    <h3><i class="icon solid fa-globe"></i> AWS-Hosted Portfolio Site</h3>
   </header>
   <div class="content">
     <p>
-      I’m a Cloud Engineering Technology graduate with hands-on experience in AWS, Terraform, and GitHub Actions. I’ve built and deployed infrastructure from scratch—including hosting this portfolio site with CI/CD automation and DNS configuration through Route 53.
+      I built and deployed this portfolio site to gain hands-on experience with real AWS infrastructure and modern DevOps practices. The site is hosted on S3, served securely through CloudFront, and mapped to my custom domain using Route 53. I manage the entire setup with Terraform, and the deployment process is fully automated using GitHub Actions with OIDC authentication.
     </p>
     <p>
-      My goal is to step into an IT support or help desk role where I can gain real-world experience with systems and users, while continuing to build toward a long-term path in cloud and DevOps. I bring strong attention to detail, a working knowledge of infrastructure and automation tools, and a growing track record of self-driven technical projects.
+      This project gave me practical experience with DNS configuration, TLS certificates, CI/CD pipelines, and infrastructure as code—all managed from my local machine. It also taught me how to secure deployments using temporary credentials and keep infrastructure reproducible from scratch.
+    </p>
+    <ul>
+      <li><strong>Infrastructure as Code:</strong> Used Terraform to define and deploy S3, CloudFront, Route 53, and ACM resources</li>
+      <li><strong>CI/CD Automation:</strong> Configured GitHub Actions to sync changes to S3 and invalidate CloudFront cache on every push</li>
+      <li><strong>OIDC Authentication:</strong> Set up GitHub’s OpenID Connect provider to assume an IAM role without storing AWS credentials</li>
+      <li><strong>Custom Domain & TLS:</strong> Managed DNS records and provisioned a certificate through ACM for HTTPS access</li>
+    </ul>
+    <p style="text-align: center;">
+      <a href="https://github.com/Kjellios/website-portfolio" target="_blank" class="button icon brands fa-github">
+        View the code on GitHub
+      </a>
+    </p>
+  </div>
+</section>
+
+<!-- Project 2: Pi-hole on Raspberry Pi -->
+<section>
+  <header>
+    <h3><i class="icon solid fa-network-wired"></i> Pi-hole on Raspberry Pi with Docker</h3>
+  </header>
+  <div class="content">
+    <p>
+      I deployed a DNS filtering and ad-blocking system using Pi-hole in Docker on a Raspberry Pi 3 running Raspberry Pi OS Lite. This project gave me hands-on experience with containerization, Linux networking, persistent storage, and home network integration.
+    </p>
+    <p>
+      I started by flashing Raspberry Pi OS Lite with custom SSH, locale, and hostname settings, then installed Docker and Docker Compose. I created a containerized Pi-hole setup using <code>network_mode: host</code> for full DNS compatibility, mounted persistent config volumes, and locked down the system for privacy and stability. Finally, I configured my ASUS router to route all DNS traffic through the Pi-hole instance and tested full functionality across devices.
+    </p>
+    <ul>
+      <li><strong>Raspberry Pi Prep:</strong> Flashed 32-bit Pi OS Lite with custom SSH access, static hostname, and key-based auth</li>
+      <li><strong>Dockerized Setup:</strong> Ran Pi-hole in Docker Compose using host networking and mounted persistent volumes</li>
+      <li><strong>Network Integration:</strong> Configured ASUS router to use the Pi-hole as primary DNS for WAN and DHCP</li>
+      <li><strong>Privacy & Access Control:</strong> Disabled upstream fallback, limited logging, secured web UI, and verified admin-only access</li>
+    </ul>
+    <p style="text-align: center;">
+      <a href="https://github.com/Kjellios/project-pihole-public" target="_blank" class="button icon brands fa-github">
+        View the code on GitHub
+      </a>
+    </p>
+  </div>
+</section>
+
+<!-- Project 3: Kubernetes with Multipass -->
+<section>
+  <header>
+    <h3><i class="icon solid fa-cubes"></i> Kubernetes Cluster with Multipass & Flannel (macOS)</h3>
+  </header>
+  <div class="content">
+    <p>
+      I built a working Kubernetes cluster from scratch using Multipass, Kubeadm, and Flannel CNI on my macOS system. The goal was to get real experience standing up a multi-node cluster, configuring container runtimes, managing networking, and learning cluster lifecycle tasks from end to end.
+    </p>
+    <p>
+      The setup included one control plane node and one worker node, each running in its own Ubuntu 24.04 VM. I used Kubeadm for initialization, installed Containerd as the runtime, and configured system settings manually to support pod networking. I also deployed a test workload, backed up cluster resources and etcd state, and scripted a full teardown process using Multipass.
+    </p>
+    <ul>
+      <li><strong>Multi-Node Cluster:</strong> Launched and configured isolated VMs with Multipass to simulate real node behavior</li>
+      <li><strong>Kubeadm Setup:</strong> Initialized the cluster manually with pod CIDR, Flannel CNI, and secure node join process</li>
+      <li><strong>Container Runtime:</strong> Installed and configured Containerd with systemd cgroups for production parity</li>
+      <li><strong>Backup & Teardown:</strong> Created full YAML snapshots, etcd backups, and automated cluster cleanup</li>
+    </ul>
+    <p style="text-align: center;">
+      <a href="https://github.com/Kjellios/project-k8s-multipass-cluster" target="_blank" class="button icon brands fa-github">
+        View the code on GitHub
+      </a>
     </p>
   </div>
 </section>
 
 
-      <!-- Projects -->
-      <section>
-        <header>
-          <h2>Projects</h2>
-        </header>
-        <div class="content">
-          <ul class="feature-icons">
-            <li class="icon solid fa-cloud">AWS Website Deployment</li>
-            <li class="icon solid fa-lock">OIDC GitHub Actions Deployment</li>
-            <li class="icon solid fa-terminal">
-              Infrastructure-as-Code with Terraform
-            </li>
-            <li class="icon solid fa-network-wired">
-              Pi-hole on Raspberry Pi with Docker
-            </li>
-          </ul>
-          <p>
-            Set up a network-wide ad blocker on a Raspberry Pi using Docker
-            Compose and custom DNS rules. Developed and deployed this website
-            using S3, CloudFront, Route 53, and Terraform, with GitHub Actions
-            using OpenID Connect for authentication.
-          </p>
-        </div>
-      </section>
+
+
+
 
       <!-- Contact & Links -->
       <section>
