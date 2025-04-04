@@ -1,3 +1,7 @@
+> This document outlines the IAM role and trust policy used by GitHub Actions to deploy this site to AWS using OpenID Connect (OIDC).  
+> It is included for transparency, reproducibility, and as a reference for secure role-based GitHub-to-AWS access.
+
+
 # GitHub OIDC Role: `GitHubActionsOIDCRole`
 
 This role is assumed by GitHub Actions workflows using OpenID Connect (OIDC) for secure, short-lived access to AWS resources. It is used for infrastructure deployment and S3 + CloudFront updates.
@@ -89,5 +93,4 @@ This role uses a scoped customer-managed policy that permits deployment to S3 an
 | Permissions scope        | Limited to S3 + CloudFront for deploy only       |
 | Secrets used             | None – authentication is token-based (OIDC)      |
 
-Last reviewed: 2025-04-03
-
+Last reviewed: 2025-04-04
