@@ -1,14 +1,14 @@
-name: Terraform Infrastructure Deployment
+name: Deploy to AWS  # <-- Must match expected status check name exactly
 
 on:
-  workflow_dispatch:  # Manual trigger from GitHub UI
+  workflow_dispatch:  # Manual trigger
   push:
     paths:
       - 'terraform/**'
       - '.github/workflows/infra-deploy.yml'
 
 permissions:
-  id-token: write  # Needed for GitHub OIDC auth
+  id-token: write
   contents: read
 
 jobs:
