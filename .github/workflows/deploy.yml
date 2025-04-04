@@ -1,6 +1,6 @@
 # .github/workflows/deploy.yml
 
-name: Deploy Website to S3 + Invalidate CloudFront
+name: Deploy to AWS
 
 on:
   push:
