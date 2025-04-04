@@ -60,6 +60,11 @@ Triggered automatically on push to `main`. It:
 - GitHub OIDC used for secure auth — no static AWS credentials
 - This repo has been scrubbed to remove secrets from Git history
 
+## Additional Documentation
+
+See [docs/README.md](docs/README.md) for internal notes on infrastructure setup, IAM roles, CI/CD design, and GitHub Actions hardening.
+
 ## License
 
 [MIT](./site/LICENSE.txt)
+
