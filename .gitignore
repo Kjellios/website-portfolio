@@ -21,6 +21,10 @@ safe.plan
 # === macOS ===
 .DS_Store
 
+# GitHub folder cache files
+.github/.DS_Store
+site/.DS_Store
+
 # === Logs ===
 *.log
 imported.txt
