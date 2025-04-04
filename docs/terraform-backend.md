@@ -1,65 +1,86 @@
-# Terraform Backend Configuration
+> This document explains how the Terraform remote backend is configured using S3 and DynamoDB.  
+> It serves as a reference for securely managing Terraform state and avoiding concurrent apply operations.
 
-This project uses a remote backend to store Terraform state in Amazon S3 with state locking provided by DynamoDB. This ensures that state is persisted reliably across runs and is protected from concurrent access.
 
-## Purpose
+# Terraform Remote Backend Setup
 
-- **S3** stores the state file (`terraform.tfstate`)
-- **DynamoDB** provides state locking to prevent concurrent `apply` runs
-- This setup supports collaboration, disaster recovery, and CI/CD automation
+This project uses an S3 bucket with DynamoDB state locking to manage the remote Terraform backend securely and reliably.
 
-## Backend Block
+## Overview
 
-Terraform's backend block is configured in a separate file: `backend-setup.tf`.
+- **Backend type**: `s3`
+- **Region**: `us-east-1`
+- **State bucket**: `kjellhysjulien.com`
+- **Lock table**: `terraform-locks`
+- **State file path**: `terraform.tfstate`
+- **Encryption**: Enabled (AES256 via S3 default encryption)
+- **Authentication**: GitHub OIDC with IAM Role (`GitHubActionsOIDCRole`)
+
+## Bucket Requirements
+
+Your `kjellhysjulien.com` S3 bucket must:
+
+- Be private (no public access via policy or ACLs)
+- Allow access from CloudFront OAC for site content
+- Store Terraform state under a specific key (e.g. `terraform.tfstate`)
+- Be versioned (recommended for state recovery)
+- Be encrypted at rest
+
+### Bucket Policy (Example)
+
+If using this bucket **only** for Terraform, restrict access to the IAM role you use locally and/or in CI/CD.  
+Since you're using it for both Terraform and public website files, apply **fine-grained IAM policies**, not broad bucket policies.
+
+## DynamoDB Table
+
+- **Name**: `terraform-locks`
+- **Partition Key**: `LockID` (String)
+- **Billing Mode**: `PAY_PER_REQUEST`
+- **Purpose**: Prevent concurrent `terraform apply` operations
+
+## Terraform Backend Configuration (backend-setup.tf)
 
 ```hcl
 terraform {
   backend "s3" {
-    bucket         = "<bucket-name>"
-    key            = "<state-path>/terraform.tfstate"
-    region         = "<region>"
-    dynamodb_table = "<lock-table-name>"
+    bucket         = "kjellhysjulien.com"
+    key            = "terraform.tfstate"
+    region         = "us-east-1"
     encrypt        = true
+    dynamodb_table = "terraform-locks"
   }
 }
 ```
 
-## Field Breakdown
+## Setup Instructions
 
-| Field           | Description                                               |
-|----------------|-----------------------------------------------------------|
-| `bucket`        | S3 bucket used to store the Terraform state file         |
-| `key`           | Path inside the bucket where the state file is stored    |
-| `region`        | AWS region where the bucket and DynamoDB table reside    |
-| `dynamodb_table`| Name of the DynamoDB table used for state locking        |
-| `encrypt`       | Ensures the state file is encrypted at rest in S3        |
+1. **Create the bucket and DynamoDB table** if they don't exist.
+   You can use Terraform to provision them (preferred), or create manually via the AWS Console.
 
-## Deployment Order
+2. **Enable versioning** on the S3 bucket (recommended).
 
-The backend must exist before Terraform can be initialized.
+3. **Add `backend-setup.tf`** (see above) with your backend block.
 
-If you're bootstrapping this from scratch:
+4. **Reinitialize Terraform** to migrate local state to remote:
+   ```bash
+   terraform init -migrate-state
+   ```
 
-1. Create the S3 bucket (private, versioned, encrypted)
-2. Create the DynamoDB table with:
-   - `Partition key`: `LockID` (string)
-   - On-demand or provisioned capacity
-3. Ensure both are in the same AWS region
+   > If your state is already remote, this will safely confirm the backend connection.
 
-Once created, run:
+## Security Considerations
 
-```bash
-terraform init
-```
-
-Terraform will connect to the backend and pull the latest state.
+- Do **not** expose the S3 bucket to public access.
+- Restrict all Terraform access via IAM roles (e.g. your GitHub OIDC role).
+- Avoid storing credentials locally; use `aws-vault`, SSO, or OIDC for authentication.
 
 ## Notes
 
-- The backend itself is not managed by Terraform. It must be created manually or through a separate bootstrap script.
-- Bucket versioning and server-side encryption should be enabled.
-- Public access should be blocked at the bucket level.
-- This backend is dedicated to this project and not shared across other modules or repositories.
+- This repo excludes `*.tfstate`, `.terraform/`, and `.env` from Git via `.gitignore`.
+- To inspect state remotely, use:
+  ```bash
+  terraform state list
+  terraform state show <resource>
+  ```
 
-Last reviewed: 2025-04-03
-
+Last reviewed: 2025-04-04
