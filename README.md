@@ -1,7 +1,7 @@
 # Portfolio Infrastructure
 
 This repository manages the infrastructure for [kjellhysjulien.com](https://kjellhysjulien.com) using Terraform, AWS, and GitHub Actions with OIDC authentication.
-<!-- Test push -->
+
 ## Overview
 
 - **Cloud provider**: AWS
