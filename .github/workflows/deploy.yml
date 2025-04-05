@@ -5,6 +5,8 @@ name: Deploy Website to S3 + Invalidate CloudFront
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 permissions:
   id-token: write
